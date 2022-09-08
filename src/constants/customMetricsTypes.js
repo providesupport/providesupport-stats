@@ -1,0 +1,8 @@
+export const OP_LOGIN = 'OP_LOGIN';
+export const OP_NAME = 'OP_NAME';
+export const OFFLINE_TIME = 'OFFLINE_TIME';
+export const OFFLINE_TIME_BY_PERIODS = 'OFFLINE_TIME_BY_PERIODS';
+export const LOAD_RATE = 'LOAD_RATE';
+export const LOAD_RATE_BY_PERIODS = 'LOAD_RATE_BY_PERIODS';
+export const TIMELINE = 'TIMELINE';
+export const TIMELINE_BY_PERIODS = 'TIMELINE_BY_PERIODS';

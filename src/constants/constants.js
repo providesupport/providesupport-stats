@@ -1,0 +1,12 @@
+export const NO_STATS_METRIC_MSG = 'No statistics for this metric!';
+export const NO_STATS_OPERATOR_OR_DEPARTMENT_MSG = 'No statistics for this operator/department!';
+export const NOT_ENOUGH_STATS_MSG = 'Not enough statistics to calculate this metric!';
+export const ACCOUNT = 'account';
+export const OPERATOR = 'operator';
+export const DEPARTMENT = 'department';
+export const OPERATORS = 'operators';
+export const DEPARTMENTS = 'departments';
+export const FUNCTION = 'function';
+export const OBJECT = 'object';
+export const STRING = 'string';
+export const LS_TIMEZONE_KEY = 'ps_timezone';

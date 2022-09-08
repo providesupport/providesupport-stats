@@ -1,0 +1,1 @@
+1. Дописать тесты для getAwayTime после того как пофиксят old_API_issues.md
