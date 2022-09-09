@@ -4,8 +4,10 @@
   "description": "",
   "main": "./dist/PSstatsAPI.js",
   "scripts": {
+    "dev": "./bin/run_dev_server.sh",
     "build": "webpack --config configs/webpack.prod.js",
-    "test": "jest",
+    "runtest": "jest",
+    "test": "./tests/run-test.sh",
     "test2": "jest ./tests/methods/getDepartmentsTimeline.spec.js",
     "start:dev": "webpack-dev-server --config configs/webpack.dev.js"
   },

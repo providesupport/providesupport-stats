@@ -1804,12 +1804,14 @@ getCustomMetrics({
 
 ## Run locally
 
-`./bin/run_dev_server.sh`
+`npm run dev`
 
 ## Running tests
 
-`./tests/run-test.sh`
+`npm run test`
 
-<!-- ## Deployment -->
+## Deployment
+
+`npm run build`
 
 <!-- # Subtleties -->
