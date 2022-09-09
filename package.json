@@ -1,7 +1,7 @@
 {
   "name": "providesupport-stats",
   "version": "1.0.3",
-  "description": "",
+  "description": "Library to get providesupport statistics",
   "main": "./dist/PSstatsAPI.js",
   "scripts": {
     "dev": "./bin/run_dev_server.sh",
@@ -16,7 +16,7 @@
     "url": "git@gitlab.ds2ps.net:production/providesupport/client/stats-js-api"
   },
   "keywords": [],
-  "author": "",
+  "author": "providesupport",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.11.6",
