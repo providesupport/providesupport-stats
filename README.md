@@ -3,6 +3,16 @@
 
 This library is designed for implementing accounts statistics in your apps.
 
+# Demo
+
+[Minimal demo](https://codepen.io/gamer0k93/pen/gOzrRQp?editors=1111)
+
+![demo](https://github.com/providesupport/providesupport-stats/blob/master/docs/demo1.png)
+
+[Site based on this library](https://stats.providesupport.com/login)
+
+![demo](https://github.com/providesupport/providesupport-stats/blob/master/docs/demo2.png)
+
 # Get started
 The library is built as a [UMD module](https://github.com/umdjs/umd) so you can load it in any way the UMD module provides. Here are examples of the most popular ones:  
 
