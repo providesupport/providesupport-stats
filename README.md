@@ -20,7 +20,7 @@ Via script tag (handy for old browsers):
 ```
 <html>
   <head>
-    <script src='https://unpkg.com/providesupport-stats@1.0.2/dist/PSstatsAPI.js'></script>
+    <script src='https://unpkg.com/providesupport-stats/dist/PSstatsAPI.js'></script>
   </head>
   <body>
     <script>
