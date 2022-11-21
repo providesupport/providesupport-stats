@@ -63,7 +63,8 @@ const statsLibInstance = new PSstatsAPI(accountName, statisticsPassword, timePer
 
 # Methods
 
-##Arguments:
+
+## Arguments:
 
 * __callback__ (required in all methods) function with one parameter - response data. Since this library works via [JSONP](https://javascript.info/fetch-crossorigin#using-scripts) you can get access to response only through callback;
 * __level__ (required in specific methods) defines if statistics data is requested for the whole account, for department(s), or for operator(s); 
@@ -3111,9 +3112,9 @@ the pre-chat survey or department wasn't selected.
 
 ## When something goes wrong:
 
-**When no data is available**
-<details>
-  <summary>If no data is available for any of the metrics in your request, you'll get the following responce:</summary>
+### When no data is available
+
+If no data is available for any of the metrics in your request, you'll get the following responce:
 
 ```
 {
@@ -3123,18 +3124,17 @@ the pre-chat survey or department wasn't selected.
     "endDate": "2022-10-31T23:00:00.000Z"
 }
 ```
-</details>
-<details>
-  <summary>If no data is available for a specific metric in your request, you'll get the following responce for this metric:</summary>
+
+If no data is available for a specific metric in your request, you'll get the following responce for this metric:
 
 ```
 "proactiveChatsSent": "No statistics for this metric!"
 ```
 </details>
 
-**When account settings are wrong**
-<details>
-  <summary>If statistics gathering is not enabled in the account settings, you'll get the following responce:</summary>
+### When account settings are wrong
+
+If statistics gathering is not enabled in the account settings, you'll get the following responce:
 
 ```
 {
@@ -3143,9 +3143,8 @@ the pre-chat survey or department wasn't selected.
     "httpStatus": 403
 }
 ```
-</details>
-<details>
-  <summary>If no statistics password specified in the account settings, you'll get the following responce:</summary>
+
+If no statistics password specified in the account settings, you'll get the following responce:
 
 ```
 {
@@ -3154,11 +3153,10 @@ the pre-chat survey or department wasn't selected.
     "httpStatus": 403
 }
 ```
-</details>
 
-**When request parameters are wrong**
-<details>
-  <summary>If timings in your request are wrong, you'll get the following responce:</summary>
+### When request parameters are wrong
+
+If timings in your request are wrong, you'll get the following responce:
 
 ```
 {
@@ -3167,9 +3165,8 @@ the pre-chat survey or department wasn't selected.
     "httpStatus": 400
 }
 ```
-</details>
-<details>
-  <summary>If wrong statistics password is entered, you'll get the following responce:</summary>
+
+If wrong statistics password is entered, you'll get the following responce:
 
 ```
 {
@@ -3178,9 +3175,8 @@ the pre-chat survey or department wasn't selected.
     "httpStatus": 403
 }
 ```
-</details>
-<details>
-  <summary>If not existing account name is entered, you'll get the following responce:</summary>
+
+If nonexisting account name is entered, you'll get the following responce:
 
 ```
 {
@@ -3189,7 +3185,6 @@ the pre-chat survey or department wasn't selected.
     "httpStatus": 404
 }
 ```
-</details>
 
 ## Additional methods:
 
