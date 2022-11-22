@@ -19,7 +19,7 @@ E.g. you may want to create your own chat statistics dashboard for your team or 
 
 (Account name and account statistics password are required to login to the application)
 
-![demo](https://github.com/providesupport/providesupport-stats/blob/master/docs/demo2.png)
+![demo](https://github.com/providesupport/providesupport-stats/blob/master/docs/provide-support-statistics-app.png)
 
 # Get started
 The library is built as a [UMD module](https://github.com/umdjs/umd) so you can load it in any way the UMD module provides. 
