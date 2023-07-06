@@ -14,6 +14,7 @@ import {
   calculateReverseTime,
   transformResponseToConvenientFormat,
   groupMetrics,
+  getStatsPeriodById,
 } from './utils'
 import {
   ACCOUNT,
@@ -26,17 +27,20 @@ import {
   COUNTER_OR_VALUE,
   METRIC_TAG,
   AVERAGE,
-  VALUES_SUM,
   MULTIPLE,
   TOTAL,
   METRICS,
   COUNTERS,
   COUNTER_COUNT,
   START_DATE,
+  START_TIME,
   END_DATE,
+  END_TIME,
   STATS_PERIOD_ID,
   ID,
+  VALUE,
   VALUES,
+  VALUES_SUM,
 } from '../constants/answerKeys'
 import calculateCustomMetrics from './calculateCustomMetrics'
 
@@ -125,7 +129,7 @@ export function parseCounterMetric(metric, statsPeriods, isShouldAddTotals) {
   let parsedMetric = [];
   const counters = metric[COUNTERS];
   counters.forEach(counter => {
-    const timePeriod = statsPeriods.find(elem => elem[ID] === counter[STATS_PERIOD_ID]);
+    const timePeriod = getStatsPeriodById(statsPeriods, counter[STATS_PERIOD_ID])
     parsedMetric.push({
       [`${timePeriod[START_DATE]} - ${timePeriod[END_DATE]}`]: counter[COUNTER_COUNT],
     });
@@ -162,6 +166,7 @@ export function parseMultipleStructuresMetric(metric, statsPeriods, opts, isShou
 }
 
 function parseStructureMetric(metricItem, statsPeriods, opts, isShouldAddTotals) {
+
   if (!metricItem) return undefined
   let parsedMetric;
   if (isShouldAddTotals) {
@@ -179,11 +184,11 @@ function parseStructureMetric(metricItem, statsPeriods, opts, isShouldAddTotals)
   }
 
   metricItem[VALUES].forEach(value => {
-    let timePeriod = statsPeriods.find(elem => elem[ID] === value[STATS_PERIOD_ID]);
+    let timePeriod = getStatsPeriodById(statsPeriods, value[STATS_PERIOD_ID])
     let statsItem = {};
     let statsItemDuration = `${timePeriod[START_DATE]} - ${timePeriod[END_DATE]}`;
     if (opts.reverse) {
-      let reverseTime = calculateReverseTime(value[VALUES_SUM], timePeriod.st, timePeriod.et);
+      let reverseTime = calculateReverseTime(value[VALUES_SUM], timePeriod[START_TIME], timePeriod[END_TIME]);
       statsItem[statsItemDuration] = {
         average: reverseTime / (value[VALUES_SUM] / value[AVERAGE]),
         total: reverseTime,
@@ -455,7 +460,7 @@ export function parseDPsOrOPsTimelineData({ metrics, statsPeriods, opts }) {
 
     metric[METRICS].forEach(metricItem => {
       metricItem[COUNTERS].forEach(counter => {
-        let timePeriod = statsPeriods.find(elem => elem[ID] === counter[STATS_PERIOD_ID]);
+        let timePeriod = getStatsPeriodById(statsPeriods, counter[STATS_PERIOD_ID])
         let statsItemDuration = `${timePeriod[START_DATE]} - ${timePeriod[END_DATE]}`;
         if (!res[statsItemDuration]) res[statsItemDuration] = 0;
         res[statsItemDuration] += counter[COUNTER_COUNT];
@@ -523,10 +528,10 @@ export function parseOfflineTime({ metrics, statsPeriods, opts }) {
         values = metricItems[metricItemInd]['values'];
         for (let ii = 0; ii < values.length; ii++) {
           value = values[ii];
-          timePeriod = statsPeriods.find(elem => elem[ID] === value[STATS_PERIOD_ID]);
+          timePeriod = getStatsPeriodById(statsPeriods, value[STATS_PERIOD_ID])
           statsItem = {};
           statsItemDuration = `${timePeriod[START_DATE]} - ${timePeriod[END_DATE]}`;
-          reverseTime = calculateReverseTime(value[VALUES_SUM], timePeriod[START_DATE], timePeriod[END_DATE]);
+          reverseTime = calculateReverseTime(value[VALUES_SUM], timePeriod[START_TIME], timePeriod[END_TIME]);
           if (metricName === CHAT_ONLINE_TIME_PER_OPERATOR) {
             statsItem[statsItemDuration] = {
               average: reverseTime / (value[VALUES_SUM] / value[AVERAGE]),

@@ -3,11 +3,15 @@ import 'regenerator-runtime/runtime'
 import JSONP from 'node-jsonp'
 import PSstatsAPI from '../../src/PSstatsAPI.js'
 
-export var stats = new PSstatsAPI('providesupport', 'wetesting_master', {
-  duration: 'month',
-  startDate: '01-Jun-2019 21:00:00',
-  endDate: '30-Aug-2020 20:59:59'
-});
+export var stats = new PSstatsAPI(
+  'providesupport',
+  'wetesting_stats',
+  {
+    duration: 'month',
+    startDate: '01-Jun-2019 21:00:00',
+    endDate: '30-Aug-2020 20:59:59'
+  },
+);
 stats.setMakeJSONPrequest(function(url, hash, onloadHandler) {
   function removeLastQueryParam(url) {
     var arr = url.split('&');
@@ -93,6 +97,11 @@ export const TIME_PERIODS = {
     duration: 'day',
     startDate: '10-May-2022 21:00:00',
     endDate: '25-May-2022 20:59:59'
+  },
+  SHORT_TIME_PERIOD6: {
+    duration: 'day',
+    startDate: 'Sep 01 2022',
+    endDate: 'Sep 03 2022'
   },
   INVALID_TIME_PERIODS: [
     {

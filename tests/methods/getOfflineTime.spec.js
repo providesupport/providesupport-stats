@@ -169,12 +169,12 @@ const PROCESSED_RESPONSE_ACCOUNT = {
     {
       "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
         "average": [
-          0.1660864754491967,
+          0.5703537584898377,
           "0s"
         ],
         "total": [
-          1479,
-          "24m 39s"
+          5079,
+          "1h 24m 39s"
         ]
       }
     },
@@ -239,7 +239,8 @@ const PROCESSED_RESPONSE_ACCOUNT = {
       }
     }
   ]
-};
+}
+
 const PROCESSED_RESPONSE_OPERATORS = {
   "operators": {
     "Talia Bush\ntalia": [
@@ -342,12 +343,12 @@ const PROCESSED_RESPONSE_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            872.5390765739687,
-            "14m 32s"
+            874.1221901023453,
+            "14m 34s"
           ],
           "total": [
-            1984153.77,
-            "22d 23h 9m 13s"
+            1987753.77,
+            "23d 9m 13s"
           ]
         }
       },
@@ -440,12 +441,12 @@ const PROCESSED_RESPONSE_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            1000694,
-            "11d 13h 58m 14s"
+            1002494,
+            "11d 14h 28m 14s"
           ],
           "total": [
-            2001388,
-            "23d 3h 56m 28s"
+            2004988,
+            "23d 4h 56m 28s"
           ]
         }
       },
@@ -674,12 +675,12 @@ const PROCESSED_RESPONSE_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            992.9253437335315,
-            "16m 32s"
+            994.6669983702906,
+            "16m 34s"
           ],
           "total": [
-            2052376.609,
-            "23d 18h 6m 16s"
+            2055976.609,
+            "23d 19h 6m 16s"
           ]
         }
       },
@@ -844,12 +845,12 @@ const PROCESSED_RESPONSE_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            2076.9557308977815,
-            "34m 36s"
+            2080.234419426003,
+            "34m 40s"
           ],
           "total": [
-            2280497.39,
-            "26d 9h 28m 17s"
+            2284097.39,
+            "26d 10h 28m 17s"
           ]
         }
       },
@@ -1004,12 +1005,12 @@ const PROCESSED_RESPONSE_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            846.5052455270098,
-            "14m 6s"
+            848.05163718039,
+            "14m 8s"
           ],
           "total": [
-            1970664.338,
-            "22d 19h 24m 24s"
+            1974264.338,
+            "22d 20h 24m 24s"
           ]
         }
       },
@@ -1260,12 +1261,12 @@ const PROCESSED_RESPONSE_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            760.7084867605226,
-            "12m 40s"
+            762.1479109903676,
+            "12m 42s"
           ],
           "total": [
-            1902531.926,
-            "22d 28m 51s"
+            1906131.926,
+            "22d 1h 28m 51s"
           ]
         }
       },
@@ -1444,12 +1445,12 @@ const PROCESSED_RESPONSE_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            1263.7923975190056,
-            "21m 3s"
+            1265.897660659129,
+            "21m 5s"
           ],
           "total": [
-            2161085.018,
-            "25d 18m 5s"
+            2164685.018,
+            "25d 1h 18m 5s"
           ]
         }
       },
@@ -1515,179 +1516,10 @@ const PROCESSED_RESPONSE_OPERATORS = {
       }
     ]
   }
-};
+}
+
 const PROCESSED_RESPONSE_DEPARTMENTS = {
   "departments": {
-    "Customer Support": [
-      {
-        "01-Jun-2019 04:00:00 - 01-Jul-2019 04:00:00": {
-          "average": [
-            98.30959712783304,
-            "1m 38s"
-          ],
-          "total": [
-            640487,
-            "7d 9h 54m 47s"
-          ]
-        }
-      },
-      {
-        "01-Jul-2019 04:00:00 - 01-Aug-2019 04:00:00": {
-          "average": [
-            0.6002016997620093,
-            "0s"
-          ],
-          "total": [
-            5355,
-            "1h 29m 15s"
-          ]
-        }
-      },
-      {
-        "01-Aug-2019 04:00:00 - 01-Sep-2019 04:00:00": {
-          "average": [
-            2.843460229769475,
-            "2s"
-          ],
-          "total": [
-            25176,
-            "6h 59m 36s"
-          ]
-        }
-      },
-      {
-        "01-Sep-2019 04:00:00 - 01-Oct-2019 04:00:00": {
-          "average": [
-            540.9251223378915,
-            "9m"
-          ],
-          "total": [
-            1668213,
-            "19d 7h 23m 33s"
-          ]
-        }
-      },
-      {
-        "01-Nov-2019 04:00:00 - 01-Dec-2019 05:00:00": {
-          "average": [
-            39.743366920830795,
-            "39s"
-          ],
-          "total": [
-            303997,
-            "3d 12h 26m 37s"
-          ]
-        }
-      },
-      {
-        "01-Dec-2019 05:00:00 - 01-Jan-2020 05:00:00": {
-          "average": [
-            208.71966268104956,
-            "3m 28s"
-          ],
-          "total": [
-            1099744,
-            "12d 17h 29m 4s"
-          ]
-        }
-      },
-      {
-        "01-Jan-2020 05:00:00 - 01-Feb-2020 05:00:00": {
-          "average": [
-            17.823709929594152,
-            "17s"
-          ],
-          "total": [
-            150343,
-            "1d 17h 45m 43s"
-          ]
-        }
-      },
-      {
-        "01-Feb-2020 05:00:00 - 01-Mar-2020 05:00:00": {
-          "average": [
-            0.8160009989606198,
-            "0s"
-          ],
-          "total": [
-            6803,
-            "1h 53m 23s"
-          ]
-        }
-      },
-      {
-        "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
-          "average": [
-            0.1660864754491967,
-            "0s"
-          ],
-          "total": [
-            1479,
-            "24m 39s"
-          ]
-        }
-      },
-      {
-        "01-Apr-2020 04:00:00 - 01-May-2020 04:00:00": {
-          "average": [
-            0.8727694814406678,
-            "0s"
-          ],
-          "total": [
-            7532,
-            "2h 5m 32s"
-          ]
-        }
-      },
-      {
-        "01-May-2020 04:00:00 - 01-Jun-2020 04:00:00": {
-          "average": [
-            2.6800810671879405,
-            "2s"
-          ],
-          "total": [
-            23775,
-            "6h 36m 15s"
-          ]
-        }
-      },
-      {
-        "01-Jun-2020 04:00:00 - 01-Jul-2020 04:00:00": {
-          "average": [
-            0.06613480725953469,
-            "0s"
-          ],
-          "total": [
-            572,
-            "9m 32s"
-          ]
-        }
-      },
-      {
-        "01-Jul-2020 04:00:00 - 01-Aug-2020 04:00:00": {
-          "average": [
-            0.7485150928098335,
-            "0s"
-          ],
-          "total": [
-            6679,
-            "1h 51m 19s"
-          ]
-        }
-      },
-      {
-        "01-Aug-2020 04:00:00 - 01-Sep-2020 04:00:00": {
-          "average": [
-            11.94186046511628,
-            "11s"
-          ],
-          "total": [
-            102700,
-            "1d 4h 31m 40s"
-          ]
-        }
-      }
-    ],
     "Sales": [
       {
         "01-Jun-2019 04:00:00 - 01-Jul-2019 04:00:00": {
@@ -1788,12 +1620,182 @@ const PROCESSED_RESPONSE_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            0.1660864754491967,
+            0.5703537584898377,
             "0s"
           ],
           "total": [
-            1479,
-            "24m 39s"
+            5079,
+            "1h 24m 39s"
+          ]
+        }
+      },
+      {
+        "01-Apr-2020 04:00:00 - 01-May-2020 04:00:00": {
+          "average": [
+            0.8727694814406678,
+            "0s"
+          ],
+          "total": [
+            7532,
+            "2h 5m 32s"
+          ]
+        }
+      },
+      {
+        "01-May-2020 04:00:00 - 01-Jun-2020 04:00:00": {
+          "average": [
+            2.6800810671879405,
+            "2s"
+          ],
+          "total": [
+            23775,
+            "6h 36m 15s"
+          ]
+        }
+      },
+      {
+        "01-Jun-2020 04:00:00 - 01-Jul-2020 04:00:00": {
+          "average": [
+            0.06613480725953469,
+            "0s"
+          ],
+          "total": [
+            572,
+            "9m 32s"
+          ]
+        }
+      },
+      {
+        "01-Jul-2020 04:00:00 - 01-Aug-2020 04:00:00": {
+          "average": [
+            0.7485150928098335,
+            "0s"
+          ],
+          "total": [
+            6679,
+            "1h 51m 19s"
+          ]
+        }
+      },
+      {
+        "01-Aug-2020 04:00:00 - 01-Sep-2020 04:00:00": {
+          "average": [
+            11.94186046511628,
+            "11s"
+          ],
+          "total": [
+            102700,
+            "1d 4h 31m 40s"
+          ]
+        }
+      }
+    ],
+    "Customer Support": [
+      {
+        "01-Jun-2019 04:00:00 - 01-Jul-2019 04:00:00": {
+          "average": [
+            98.30959712783304,
+            "1m 38s"
+          ],
+          "total": [
+            640487,
+            "7d 9h 54m 47s"
+          ]
+        }
+      },
+      {
+        "01-Jul-2019 04:00:00 - 01-Aug-2019 04:00:00": {
+          "average": [
+            0.6002016997620093,
+            "0s"
+          ],
+          "total": [
+            5355,
+            "1h 29m 15s"
+          ]
+        }
+      },
+      {
+        "01-Aug-2019 04:00:00 - 01-Sep-2019 04:00:00": {
+          "average": [
+            2.843460229769475,
+            "2s"
+          ],
+          "total": [
+            25176,
+            "6h 59m 36s"
+          ]
+        }
+      },
+      {
+        "01-Sep-2019 04:00:00 - 01-Oct-2019 04:00:00": {
+          "average": [
+            540.9251223378915,
+            "9m"
+          ],
+          "total": [
+            1668213,
+            "19d 7h 23m 33s"
+          ]
+        }
+      },
+      {
+        "01-Nov-2019 04:00:00 - 01-Dec-2019 05:00:00": {
+          "average": [
+            39.743366920830795,
+            "39s"
+          ],
+          "total": [
+            303997,
+            "3d 12h 26m 37s"
+          ]
+        }
+      },
+      {
+        "01-Dec-2019 05:00:00 - 01-Jan-2020 05:00:00": {
+          "average": [
+            208.71966268104956,
+            "3m 28s"
+          ],
+          "total": [
+            1099744,
+            "12d 17h 29m 4s"
+          ]
+        }
+      },
+      {
+        "01-Jan-2020 05:00:00 - 01-Feb-2020 05:00:00": {
+          "average": [
+            17.823709929594152,
+            "17s"
+          ],
+          "total": [
+            150343,
+            "1d 17h 45m 43s"
+          ]
+        }
+      },
+      {
+        "01-Feb-2020 05:00:00 - 01-Mar-2020 05:00:00": {
+          "average": [
+            0.8160009989606198,
+            "0s"
+          ],
+          "total": [
+            6803,
+            "1h 53m 23s"
+          ]
+        }
+      },
+      {
+        "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
+          "average": [
+            0.5703537584898377,
+            "0s"
+          ],
+          "total": [
+            5079,
+            "1h 24m 39s"
           ]
         }
       },
@@ -1859,7 +1861,8 @@ const PROCESSED_RESPONSE_DEPARTMENTS = {
       }
     ]
   }
-};
+}
+
 const PROCESSED_RESPONSE_CUSTOM_OPERATORS = {
   "operators": {
     "Talia Bush\ntalia": [
@@ -1962,12 +1965,12 @@ const PROCESSED_RESPONSE_CUSTOM_OPERATORS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            872.5390765739687,
-            "14m 32s"
+            874.1221901023453,
+            "14m 34s"
           ],
           "total": [
-            1984153.77,
-            "22d 23h 9m 13s"
+            1987753.77,
+            "23d 9m 13s"
           ]
         }
       },
@@ -2033,7 +2036,8 @@ const PROCESSED_RESPONSE_CUSTOM_OPERATORS = {
       }
     ]
   }
-};
+}
+
 const PROCESSED_RESPONSE_CUSTOM_DEPARTMENTS = {
   "departments": {
     "Sales": [
@@ -2136,12 +2140,12 @@ const PROCESSED_RESPONSE_CUSTOM_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            0.1660864754491967,
+            0.5703537584898377,
             "0s"
           ],
           "total": [
-            1479,
-            "24m 39s"
+            5079,
+            "1h 24m 39s"
           ]
         }
       },
@@ -2207,7 +2211,8 @@ const PROCESSED_RESPONSE_CUSTOM_DEPARTMENTS = {
       }
     ]
   }
-};
+}
+
 const PROCESSED_RESPONSE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
   "operators": {
     "Olga Bondar\nolkinsmile": [
@@ -2310,12 +2315,12 @@ const PROCESSED_RESPONSE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            2076.9557308977815,
-            "34m 36s"
+            2080.234419426003,
+            "34m 40s"
           ],
           "total": [
-            2280497.39,
-            "26d 9h 28m 17s"
+            2284097.39,
+            "26d 10h 28m 17s"
           ]
         }
       },
@@ -2482,12 +2487,12 @@ const PROCESSED_RESPONSE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            0.1660864754491967,
+            0.5703537584898377,
             "0s"
           ],
           "total": [
-            1479,
-            "24m 39s"
+            5079,
+            "1h 24m 39s"
           ]
         }
       },
@@ -2553,7 +2558,8 @@ const PROCESSED_RESPONSE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
       }
     ]
   }
-};
+}
+
 const PROCESSED_RESPONSE_MULTIPLE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
   "operators": {
     "Tanya Laskin\ntanya": [
@@ -2584,12 +2590,12 @@ const PROCESSED_RESPONSE_MULTIPLE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            1000694,
-            "11d 13h 58m 14s"
+            1002494,
+            "11d 14h 28m 14s"
           ],
           "total": [
-            2001388,
-            "23d 3h 56m 28s"
+            2004988,
+            "23d 4h 56m 28s"
           ]
         }
       },
@@ -2731,12 +2737,12 @@ const PROCESSED_RESPONSE_MULTIPLE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            2076.9557308977815,
-            "34m 36s"
+            2080.234419426003,
+            "34m 40s"
           ],
           "total": [
-            2280497.39,
-            "26d 9h 28m 17s"
+            2284097.39,
+            "26d 10h 28m 17s"
           ]
         }
       },
@@ -2903,12 +2909,12 @@ const PROCESSED_RESPONSE_MULTIPLE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            0.1660864754491967,
+            0.5703537584898377,
             "0s"
           ],
           "total": [
-            1479,
-            "24m 39s"
+            5079,
+            "1h 24m 39s"
           ]
         }
       },
@@ -3073,12 +3079,12 @@ const PROCESSED_RESPONSE_MULTIPLE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
       {
         "01-Mar-2020 05:00:00 - 01-Apr-2020 04:00:00": {
           "average": [
-            0.1660864754491967,
+            0.5703537584898377,
             "0s"
           ],
           "total": [
-            1479,
-            "24m 39s"
+            5079,
+            "1h 24m 39s"
           ]
         }
       },
@@ -3145,4 +3151,4 @@ const PROCESSED_RESPONSE_MULTIPLE_CUSTOM_OPERATORS_AND_DEPARTMENTS = {
     ],
     "noSuchDepart": "No statistics for this operator/department!"
   }
-};
+}

@@ -13,6 +13,7 @@ import {
   MULTIPLE,
   METRIC_MULTIPLE,
   COUNTER_COUNT,
+  ID,
 } from '../constants/answerKeys'
 import { isRatesByStatsPeriod } from '../constants/metrics'
 
@@ -46,9 +47,7 @@ export function filterThroughLevel(data, { level, metricKeys }) {
   return processedData;
 }
 
-export function calculateReverseTime(seconds, startTime, endTime) {
-  let startTimeInMs = (new Date(startTime)).getTime();
-  let endTimeInMs = (new Date(endTime)).getTime();
+export function calculateReverseTime(seconds, startTimeInMs, endTimeInMs) {
   let secondsInTimePeriod = (endTimeInMs - startTimeInMs) / 1000;
   let result = secondsInTimePeriod - seconds;
   return result > 0 ? Math.round(result) : 0;
@@ -59,7 +58,6 @@ export function transformResponseToConvenientFormat(response) {
   let metricsAndRates = {};
   if (metricRatesPool) {
     metricRatesPool.forEach(rate => {
-      // rate.isRate = true
       rate = tryTransformRateByStatsPeriodToRateByTag(rate)
       metricsAndRates[rate[METRIC_NAME]] = secondLevelTransformationRateToMetric(rate)
     })
@@ -92,7 +90,7 @@ function tryTransformRateByStatsPeriodToRateByTag(rate) {
 }
 
 function secondLevelTransformationRateToMetric(rate) {
-  if (rate[TAG1] !== undefined) {
+    if (rate[TAG1] !== undefined) {
     rate[METRIC_TAG] = rate[TAG1];
     delete rate[TAG1];
   }
@@ -105,8 +103,14 @@ function secondLevelTransformationRateToMetric(rate) {
   if (rate[RATES_BY_STATS_PERIOD] !== undefined) {
     rate[VALUES] = rate[RATES_BY_STATS_PERIOD];
     delete rate[RATES_BY_STATS_PERIOD];
+  }
+
+  if (rate[VALUES] !== undefined) {
     rate[VALUES].forEach((value, ii) => {
-      rate[VALUES][ii][COUNTER_COUNT] = transformNumToRate(value[VALUE]);
+      if (value[VALUE] !== undefined) {
+        rate[VALUES][ii][COUNTER_COUNT] = transformNumToRate(value[VALUE]);
+        delete rate[VALUES][ii][VALUE]
+      }
     })
   }
 
@@ -140,4 +144,8 @@ export function groupMetrics(metricsFromResponse, metricsGroups, cummonOpts) {
 
 function transformNumToRate(num) {
   return `${Math.round(num * 100)}%`
+}
+
+export function getStatsPeriodById(statsPeriods, id) {
+  return statsPeriods.find(elem => elem[ID] === id)
 }

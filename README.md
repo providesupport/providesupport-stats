@@ -3439,22 +3439,3 @@ getCustomMetrics({
   ]
 ```  
 </details>
-
-
-# The working process
-
-- Before the first run - `./bin/first-run.sh`
-
-## Run locally
-
-`npm run dev`
-
-## Running tests
-
-`npm run test`
-
-## Deployment
-
-`npm run build`
-
-<!-- # Subtleties -->
