@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/PSstatsAPI.js',
   output: {
     filename: 'PSstatsAPI.js',
-    path: path.resolve(__dirname, '../dist'),
+    path: path.resolve(__dirname, './dist'),
     library: 'PSstatsAPI',
     libraryTarget: 'umd',
     libraryExport: "default",

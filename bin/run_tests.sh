@@ -2,4 +2,5 @@
 
 cd `dirname $0`
 
-node -r esm ../tests/index.js
+cd ..
+npm run test
