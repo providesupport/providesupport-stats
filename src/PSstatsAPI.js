@@ -384,31 +384,7 @@ export default class PSstatsAPI {
     CHAT_ONLINE_TIME_PER_DEPARTMENT,
   ], { postParser: addTimeStringsToResponse })
 
-  getAwayTime = (simplifiedLevel, callback, timePeriod) => {
-    validateArgument(simplifiedLevel, 'SIMPLIFIED_LEVEL');
-    let metrics = [CHAT_AWAY_TIME_PER_OPERATOR];
-    if (typeof simplifiedLevel === 'string') {
-      return this._retrieveDataByMetrics({
-        metricsGroups: [{ metrics: CHAT_AWAY_TIME_PER_OPERATOR }],
-        callback,
-        opts: {
-          timePeriod,
-          level: simplifiedLevel,
-          postParser: addTimeStringsToResponse,
-        },
-      });
-    }
-    metrics = Object.keys(simplifiedLevel).length === 1 ? metrics[+!simplifiedLevel.operators] : metrics;
-    return this._retrieveDataByMetrics({
-      metricsGroups: [{ metrics }],
-      callback,
-      opts: {
-        timePeriod,
-        level: simplifiedLevel,
-        postParser: addTimeStringsToResponse,
-      },
-    });
-  }
+  getOperatorsAwayTime = this._standardRequest(CHAT_AWAY_TIME_PER_OPERATOR, { postParser: addTimeStringsToResponse })
 
   getOfflineTime = this._requestWithLevel([
     CHAT_ONLINE_TIME_PER_ACCOUNT,

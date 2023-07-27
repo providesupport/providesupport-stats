@@ -1,16 +1,16 @@
 {
   "name": "providesupport-stats",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Library to get providesupport statistics",
   "main": "./dist/PSstatsAPI.js",
   "scripts": {
     "dev": "./bin/run_dev_server.sh",
-    "build": "webpack --config ./webpack.prod.js",
+    "build": "webpack --config ./configs/webpack.prod.js",
     "runtest": "jest",
     "test": "./tests/run-test.sh",
-    "test2": "jest ./tests/methods/getAccountTimeline.spec.js",
+    "test2": "jest ./tests/methods/getOperatorsAwayTime.spec.js",
     "test3": "jest ./tests/methods/getWebsiteTrafficTimeline.spec.js",
-    "start:dev": "webpack-dev-server --config ./webpack.dev.js"
+    "start:dev": "webpack-dev-server --config ./configs/webpack.dev.js"
   },
   "repository": {
     "type": "git",

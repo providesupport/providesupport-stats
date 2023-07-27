@@ -1011,7 +1011,7 @@ Methods:
 
 </details>
 
-**getAwayTime('operators'||'departments', callback, \[timePeriod\])**  
+**getOperatorsAwayTime(callback, \[timePeriod\])**  
 <details>
   <summary>return value from callback:</summary>
 
@@ -1256,8 +1256,8 @@ List of available metrics and their equivalent to regular methods:
 * _'chat/accept-chat-delay-per-account'_  - equivalent to getChatAcceptDelay('account')
 * _'chat/accept-chat-delay-per-operator'_  - equivalent to getChatAcceptDelay('operators')
 * _'chat/accept-chat-delay-per-department'_ - equivalent to getChatAcceptDelay('departments')
-* _'chat/away-time-per-operator'_  - equivalent to getAwayTime('operators')
-* _'chat/away-time-per-department'_ - equivalent to getAwayTime('departments')
+* _'chat/away-time-per-operator'_  - equivalent to getOperatorsAwayTime('operators')
+* _'chat/away-time-per-department'_ - equivalent to getOperatorsAwayTime('departments')
 * _'chat/online-time-per-account'_  - equivalent to getOnlineTime('account')
 * _'chat/online-time-per-operator'_  - equivalent to getOnlineTime('operators')
 * _'chat/online-time-per-department'_ - equivalent to getOnlineTime('departments')

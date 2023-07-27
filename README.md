@@ -2816,7 +2816,7 @@ the pre-chat survey or department wasn't selected.
 ```  
 </details>
 
-**getAwayTime('operators', callback, \[timePeriod\])**  
+**getOperatorsAwayTime(callback, \[timePeriod\])**  
 <details>
   <summary>Example of callback response data:</summary>
 

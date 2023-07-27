@@ -7,7 +7,7 @@ Also asynchronous multiple API calls are possible because each request has uniqu
 
 ## Methods
 Most methods (apart from getTimePeriod and setTimePeriod) accept 'cb' (callback) and 'tp' (timePeriod) argument. Some of them also accept 'lvl' argument.  
-'getAwayTime' accepts simplified level(no 'account' value)  
+'getOperatorsAwayTime' accepts simplified level(no 'account' value)  
 'getCustomMetrics' accepts arrayOfMetrics.  
 More about methods you can read in 'docs_for_users.md' file.
 
