@@ -126,6 +126,8 @@ export function parseMultipleCountersMetric(metric, statsPeriods, isShouldAddTot
 }
 
 export function parseCounterMetric(metric, statsPeriods, isShouldAddTotals) {
+  if (!metric) return undefined
+
   let parsedMetric = [];
   const counters = metric[COUNTERS];
   counters.forEach(counter => {
@@ -259,11 +261,12 @@ function _parseSummaryData(metricsData) {
   for (const key in metricsData) {
     const metric = metricsData[key];
     const { metricNameInResponse } = metric;
-    if (!parsedData[metricNameInResponse]) parsedData[metricNameInResponse] = {};
     metric[METRICS].forEach(metricItem => {
       if (metric[TAG_TITLE] === 'Page URL') { /* исключение */
-        parsedData[metricNameInResponse][metricItem[METRIC_TAG]] = metricItem[TOTAL];
+        if (!parsedData[metricNameInResponse]) parsedData[metricNameInResponse] = {}
+        parsedData[metricNameInResponse][metricItem[METRIC_TAG]] = metricItem[TOTAL]
       } else {
+        if (!parsedData[metricNameInResponse]) parsedData[metricNameInResponse] = {}
         parsedData[metricNameInResponse] = metricItem[TOTAL] !== undefined
           ? metricItem[TOTAL]
           : {

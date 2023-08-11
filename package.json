@@ -8,7 +8,7 @@
     "build": "webpack --config ./configs/webpack.prod.js",
     "runtest": "jest",
     "test": "./tests/run-test.sh",
-    "test2": "jest ./tests/methods/getOperatorsAwayTime.spec.js",
+    "test2": "jest ./tests/methods/getAccountTimeline.spec.js",
     "test3": "jest ./tests/methods/getWebsiteTrafficTimeline.spec.js",
     "start:dev": "webpack-dev-server --config ./configs/webpack.dev.js"
   },

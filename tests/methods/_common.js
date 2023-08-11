@@ -103,6 +103,11 @@ export const TIME_PERIODS = {
     startDate: 'Sep 01 2022',
     endDate: 'Sep 03 2022'
   },
+  SHORT_TIME_PERIOD7: {
+    duration: 'month',
+    startDate: 'Jan 01 2019',
+    endDate: 'Apr 30 2019'
+  },
   INVALID_TIME_PERIODS: [
     {
       duration: 'day',

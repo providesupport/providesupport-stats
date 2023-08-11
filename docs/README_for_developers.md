@@ -22,7 +22,7 @@ Library to simplify work with the backend of ProvideSupport statistics
 
 `git push origin master`
 Enter github login (`kterentiev93`) and token, go to create a token:
-`[github site] / Settings / Developer Settings / Personal access tokens / Tokens / Generate new token`
+`[github site] / Settings / Developer Settings / Personal access tokens / Tokens / Generate new token` (ghp_...)
 
 ## Deployment to NPM
 
