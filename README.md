@@ -3189,12 +3189,47 @@ If nonexisting account name is entered, you'll get the following responce:
 ## Additional methods:
 
 **setTimePeriod(\[timePeriod\])**
+<details>
+  <summary>Usage example:</summary>
+```
+setTimePeriod({
+    duration: 'month',
+    startDate: '01 Jun 2019 21:00:00',
+    endDate: '30 Aug 2020 20:59:59'
+})
+```
+</details> 
 
 **getTimePeriod()**
+<details>
+  <summary>Example of callback response data:</summary>
+```
+{
+    duration: 'month',
+    startDate: '01 Jun 2019 21:00:00',
+    endDate: '30 Aug 2020 20:59:59'
+}
+```
+</details> 
 
 **getParserByName(name)**
+Returns parser (function)
 
 **getCustomMetrics({ metricsGroups, metrics, opts, callback })** - method for creating custom queries
+<details>
+  <summary>Params:</summary>
+    metricsGroups {Array}{metricsGroup} - is an array of objects, with parameters "metrics" and "opts" (the description is the same as the parameters below)
+    metrics {Object} - object where key is the name of the metric and value is the key in the response
+    opts {Object}
+    opts.timePeriod {timePeriod}
+    opts.customParserName {string} - parser name
+    opts.isShouldAddTotals {boolean} - add the "total" parameter to the response
+    callback {function}
+```
+
+```  
+</details> 
+
 <details>
   <summary>Usage example:</summary>
 
@@ -3241,7 +3276,7 @@ getCustomMetrics({
         {
             metrics: { 'chat/chats-per-account': 'chatCallsTotals' },
             opts: {
-            customParserName: 'parseSummaryAllItems',
+                customParserName: 'parseSummaryAllItems',
             }
         }
     ],

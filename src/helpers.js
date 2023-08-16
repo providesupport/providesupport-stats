@@ -347,14 +347,23 @@ export function processTimePeriodArg(timePeriod) {
   validateArgument(timePeriod.duration, ['hour', 'day', 'week', 'month', 'year']);
   validateArgument(timePeriod.startDate, 'DATE');
   validateArgument(timePeriod.endDate, 'DATE');
-  let startDate = new Date(timePeriod.startDate);
-  let endDate = new Date(timePeriod.endDate);
-  let isEndEarlierThanStart = (endDate.getTime() - startDate.getTime()) < 0;
+  const startDate = new Date(timePeriod.startDate);
+  const endDate = new Date(timePeriod.endDate);
+
+  const isEndEarlierThanStart = (endDate.getTime() - startDate.getTime()) < 0;
   if (isEndEarlierThanStart) {
     throw TypeError(
       `startDate must be less than endDate!\nSupplied startDate: ${startDate}\nSupplied endDate: ${endDate}`,
     );
   }
+
+  const isStartEqualsEnd = endDate.getTime() === startDate.getTime()
+  if (isStartEqualsEnd) {
+    throw TypeError(
+      `startDate must be less than endDate!\nSupplied startDate: ${startDate}\nSupplied endDate: ${endDate}`,
+    );
+  }
+
   timePeriod.startDate = formatDate(startDate, true);
   timePeriod.endDate = formatDate(endDate, true);
 }

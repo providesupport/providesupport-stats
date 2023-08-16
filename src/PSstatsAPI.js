@@ -153,65 +153,69 @@ export default class PSstatsAPI {
   })
 
   _retrieveDataByMetrics = ({ metricsGroups, callback, opts }) => {
-    /* validate params */
-    if (opts.level) opts.level = transformLevelToStandartFormal(opts.level)
-    if (opts.customParserName) opts.customParser = this.getParserByName(opts.customParserName)
-    metricsGroups.forEach(({ metrics, opts: localOpts }, ii) => {
-      let { level } = opts
-      if (localOpts) {
-        if (localOpts.level) {
-          localOpts.level = transformLevelToStandartFormal(localOpts.level);
-          level = localOpts.level
+    try {
+      /* validate params */
+      if (opts.level) opts.level = transformLevelToStandartFormal(opts.level)
+      if (opts.customParserName) opts.customParser = this.getParserByName(opts.customParserName)
+      metricsGroups.forEach(({ metrics, opts: localOpts }, ii) => {
+        let { level } = opts
+        if (localOpts) {
+          if (localOpts.level) {
+            localOpts.level = transformLevelToStandartFormal(localOpts.level);
+            level = localOpts.level
+          }
+          if (localOpts.customParserName) localOpts.customParser = this.getParserByName(localOpts.customParserName)
         }
-        if (localOpts.customParserName) localOpts.customParser = this.getParserByName(localOpts.customParserName)
-      }
-      if (!level) return
-      metricsGroups[ii].metrics = handleLevel(level, metrics)
-    });
-    metricsGroups.forEach(({ metrics }, ii) => {
-      metricsGroups[ii].metrics = transformMetricsToObj(metrics)
-    });
-    validateArgument(callback, 'FUNCTION');
-    if (opts.customParser) validateArgument(opts.customParser, 'FUNCTION');
-    if (opts.postParser) validateArgument(opts.postParser, 'FUNCTION');
+        if (!level) return
+        metricsGroups[ii].metrics = handleLevel(level, metrics)
+      });
+      metricsGroups.forEach(({ metrics }, ii) => {
+        metricsGroups[ii].metrics = transformMetricsToObj(metrics)
+      });
+      validateArgument(callback, 'FUNCTION');
+      if (opts.customParser) validateArgument(opts.customParser, 'FUNCTION');
+      if (opts.postParser) validateArgument(opts.postParser, 'FUNCTION');
 
-    const HASH_LENGTH = 6;
-    let hash = createRandomString(HASH_LENGTH);
-    let url = this._buildURL(metricsGroups, hash, opts.isWebsitesStats, opts.timePeriod);
-    this._createJSONPhandler(hash);
-    this._makeJSONPrequest(url, hash, () => {
-      let response = this.rawResponses[hash];
-      opts.timePeriod = opts.timePeriod || this.getTimePeriod();
-      if (response.error) {
-        response = {
-          error: response.error,
-          message: response.errorDescription,
-          httpStatus: response.httpStatus,
-        }
-      } else {
-        this.timeZone = response.statisticsPool.accountInfo.timeZone;
-        this.callDistributionMode = response.statisticsPool.accountInfo.callDistributionMode;
-        localStorage.setItem(LS_TIMEZONE_KEY, this.timeZone);
-        if (!response.statisticsPool.statsPeriods.length) {
+      const HASH_LENGTH = 6;
+      let hash = createRandomString(HASH_LENGTH);
+      let url = this._buildURL(metricsGroups, hash, opts.isWebsitesStats, opts.timePeriod);
+      this._createJSONPhandler(hash);
+      this._makeJSONPrequest(url, hash, () => {
+        let response = this.rawResponses[hash];
+        opts.timePeriod = opts.timePeriod || this.getTimePeriod();
+        if (response.error) {
           response = {
-            noStats: true,
-            message: `No statistics for this time period: ${opts.timePeriod.startDate} - ${opts.timePeriod.endDate}`,
-            startDate: new Date(opts.timePeriod.startDate),
-            endDate: new Date(opts.timePeriod.endDate),
-          };
-        } else response = parseRawResponse(response, metricsGroups, opts);
+            error: response.error,
+            message: response.errorDescription,
+            httpStatus: response.httpStatus,
+          }
+        } else {
+          this.timeZone = response.statisticsPool.accountInfo.timeZone;
+          this.callDistributionMode = response.statisticsPool.accountInfo.callDistributionMode;
+          localStorage.setItem(LS_TIMEZONE_KEY, this.timeZone);
+          if (!response.statisticsPool.statsPeriods.length) {
+            response = {
+              noStats: true,
+              message: `No statistics for this time period: ${opts.timePeriod.startDate} - ${opts.timePeriod.endDate}`,
+              startDate: new Date(opts.timePeriod.startDate),
+              endDate: new Date(opts.timePeriod.endDate),
+            };
+          } else response = parseRawResponse(response, metricsGroups, opts);
+        }
+        delete this.rawResponses[hash];
+        delete window[`_psHandleStatsResponse_${hash}`];
+        callback(response);
+      });
+      return () => {
+        let scriptElement = document.getElementById(`ps_stats_${hash}`);
+        if (!scriptElement) return false;
+        scriptElement.onload = () => { delete window[`_psHandleStatsResponse_${hash}`] };
+        scriptElement.parentNode.removeChild(scriptElement);
+        return true;
       }
-      delete this.rawResponses[hash];
-      delete window[`_psHandleStatsResponse_${hash}`];
-      callback(response);
-    });
-    return () => {
-      let scriptElement = document.getElementById(`ps_stats_${hash}`);
-      if (!scriptElement) return false;
-      scriptElement.onload = () => { delete window[`_psHandleStatsResponse_${hash}`] };
-      scriptElement.parentNode.removeChild(scriptElement);
-      return true;
-    };
+    } catch(error) {
+      console.error(error)
+    }
   }
 
   _buildURL = (metricsGroups, hash, isWebsitesStats, optTimePeriod) => {
