@@ -3219,15 +3219,18 @@ Returns parser (function)
 <details>
   <summary>Params:</summary>
     metricsGroups {Array}{metricsGroup} - is an array of objects, with parameters "metrics" and "opts" (the description is the same as the parameters below)
-    metrics {Object} - object where key is the name of the metric and value is the key in the response
-    opts {Object}
-    opts.timePeriod {timePeriod}
-    opts.customParserName {string} - parser name
-    opts.isShouldAddTotals {boolean} - add the "total" parameter to the response
-    callback {function}
-```
 
-```  
+    metrics {Object} - object where key is the name of the metric and value is the key in the response
+
+    opts {Object}
+
+    opts.timePeriod {timePeriod}
+
+    opts.customParserName {string} - parser name
+
+    opts.isShouldAddTotals {boolean} - add the "total" parameter to the response
+
+    callback {function}
 </details> 
 
 <details>
