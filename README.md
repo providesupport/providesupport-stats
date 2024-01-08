@@ -3130,7 +3130,6 @@ If no data is available for a specific metric in your request, you'll get the fo
 ```
 "proactiveChatsSent": "No statistics for this metric!"
 ```
-</details>
 
 ### When account settings are wrong
 
@@ -3191,6 +3190,7 @@ If nonexisting account name is entered, you'll get the following responce:
 **setTimePeriod(\[timePeriod\])**
 <details>
   <summary>Usage example:</summary>
+  
 ```
 setTimePeriod({
     duration: 'month',
@@ -3203,14 +3203,15 @@ setTimePeriod({
 **getTimePeriod()**
 <details>
   <summary>Example of callback response data:</summary>
-```
-{
-    duration: 'month',
-    startDate: '01 Jun 2019 21:00:00',
-    endDate: '30 Aug 2020 20:59:59'
-}
-```
-</details> 
+
+  ```
+  {
+        duration: 'month',
+        startDate: '01 Jun 2019 21:00:00',
+        endDate: '30 Aug 2020 20:59:59'
+    }
+  ```
+</details>
 
 **getParserByName(name)**
 Returns parser (function)
