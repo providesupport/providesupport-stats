@@ -11,9 +11,9 @@ E.g. you may want to create your own chat statistics dashboard for your team or 
 
 # Demo
 
-[Minimal demo](https://codepen.io/gamer0k93/pen/gOzrRQp?editors=1111)
+[Minimal demo](https://codepen.io/providesupport/pen/MWRPwYJ)
 
-![demo](https://github.com/providesupport/providesupport-stats/blob/master/docs/demo1.png)
+In the demo, you'll learn how to import and initialize the statistics library, get some statistics data and visualise it. 
 
 [Provide Support Live Chat statistics application](https://stats.providesupport.com/) based on this library
 
