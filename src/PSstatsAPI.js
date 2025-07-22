@@ -183,7 +183,13 @@ export default class PSstatsAPI {
       this._makeJSONPrequest(url, hash, () => {
         let response = this.rawResponses[hash];
         opts.timePeriod = opts.timePeriod || this.getTimePeriod();
-        if (response.error) {
+        if (response) {
+          response = {
+            error: 'error',
+            message: 'Failed to load data from the remote server. Please try again later.',
+            httpStatus: 502,
+          }
+        } else if (response.error) {
           response = {
             error: response.error,
             message: response.errorDescription,
@@ -263,13 +269,15 @@ export default class PSstatsAPI {
   }
 
   _makeJSONPrequest = (url, hash, onloadHandler) => {
-    let request = document.createElement('script');
+    const request = document.createElement('script');
     request.id = `ps_stats_${hash}`;
     request.src = url;
-    request.onload = (event => {
+    const cleanUpAndCall = (event) => {
       onloadHandler();
-      event.target.parentNode.removeChild(event.target);
-    });
+      event.target?.parentNode?.removeChild(event.target);
+    };
+    request.onload = cleanUpAndCall;
+    request.onerror = cleanUpAndCall;
     document.body.appendChild(request);
   }
 
