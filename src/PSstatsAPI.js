@@ -183,7 +183,7 @@ export default class PSstatsAPI {
       this._makeJSONPrequest(url, hash, () => {
         let response = this.rawResponses[hash];
         opts.timePeriod = opts.timePeriod || this.getTimePeriod();
-        if (response) {
+        if (!response) {
           response = {
             error: 'error',
             message: 'Failed to load data from the remote server. Please try again later.',
