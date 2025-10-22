@@ -232,7 +232,7 @@ export default class PSstatsAPI {
     let baseURL =
       `https://stats-${websiteHash}api.providesupport.com/api/v1/get-statistics/providesupport/${
         this.accountName
-      }?access_token=${
+      }?human-readable-json=false&access_token=${
         this.md5Password}`;
     let metricsInStr = transformMetricsGroupsToStr(metricsGroups);
     if (optTimePeriod) {
