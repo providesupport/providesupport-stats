@@ -5,7 +5,7 @@ import PSstatsAPI from '../../src/PSstatsAPI.js'
 
 export var stats = new PSstatsAPI(
   'providesupport',
-  'wetesting_master',
+  'statsapptesting',
   {
     duration: 'month',
     startDate: '01-Jun-2019 21:00:00',
