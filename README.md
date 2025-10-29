@@ -29,7 +29,7 @@ Via script tag (handy for old browsers):
 ```
 <html>
   <head>
-    <script src='https://unpkg.com/providesupport-stats/dist/PSstatsAPI.js'></script>
+    <script src='https://unpkg.com/@providesupport/stats/dist/PSstatsAPI.js'></script>
   </head>
   <body>
     <script>
@@ -49,7 +49,7 @@ Via script tag (handy for old browsers):
 
 Via ES2015 module:
 ```
-import PSstatsAPI from 'providesupport-stats';
+import PSstatsAPI from '@providesupport/stats';
 
 const accountName = 'your_account_name';
 const statisticsPassword = 'your_statistics_password';
