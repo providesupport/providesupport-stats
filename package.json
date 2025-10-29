@@ -1,6 +1,6 @@
 {
-  "name": "providesupport-stats",
-  "version": "1.0.14",
+  "name": "@providesupport/stats",
+  "version": "1.0.15",
   "description": "Library to get providesupport statistics",
   "main": "./dist/PSstatsAPI.js",
   "scripts": {
@@ -19,6 +19,9 @@
   "homepage": "https://github.com/providesupport/providesupport-stats#readme",
   "bugs": {
     "url": "https://github.com/providesupport/providesupport-stats/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [],
   "author": "providesupport",
