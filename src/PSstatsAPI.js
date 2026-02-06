@@ -140,6 +140,7 @@ export default class PSstatsAPI {
   }
 
   /* PRIVATE ******************************************************************************************************* */
+
   _standardRequest = (metrics, opts) => (callback, timePeriod) => this._retrieveDataByMetrics({
     metricsGroups: [{ metrics }],
     callback,
@@ -150,6 +151,12 @@ export default class PSstatsAPI {
     metricsGroups: [{ metrics }],
     callback,
     opts: { ...opts, timePeriod, level },
+  })
+
+  _limitedRequest = (metrics, opts) => (limitedOpts = {}) => (callback, timePeriod) => this._retrieveDataByMetrics({
+    metricsGroups: [{ metrics }],
+    callback,
+    opts: { ...opts, timePeriod, limitedOpts },
   })
 
   _retrieveDataByMetrics = ({ metricsGroups, callback, opts }) => {
@@ -178,7 +185,8 @@ export default class PSstatsAPI {
 
       const HASH_LENGTH = 6;
       let hash = createRandomString(HASH_LENGTH);
-      let url = this._buildURL(metricsGroups, hash, opts.isWebsitesStats, opts.timePeriod);
+
+      let url = this._buildURL(metricsGroups, hash, opts.isWebsitesStats, opts.timePeriod, opts.limitedOpts);
       this._createJSONPhandler(hash);
       this._makeJSONPrequest(url, hash, () => {
         let response = this.rawResponses[hash];
@@ -199,6 +207,20 @@ export default class PSstatsAPI {
           this.timeZone = response.statisticsPool.accountInfo.timeZone;
           this.callDistributionMode = response.statisticsPool.accountInfo.callDistributionMode;
           localStorage.setItem(LS_TIMEZONE_KEY, this.timeZone);
+
+          if (response.statisticsPool?.accounts?.[0]?.metricTypes) {
+            const metricTypes = response.statisticsPool.accounts[0].metricTypes;
+            console.group('All Metric Types in Response');
+            console.table(metricTypes.map(metric => ({
+              'Metric Name': metric.mn,
+              Type: metric.cv === 'counter' ? 'Counter' : 'Value',
+              Multiplicity: metric.mu === 'multiple' ? 'Multiple' : 'Single',
+              TMC: metric.tmc !== undefined ? metric.tmc : '-',
+            })));
+            console.log('Full metricTypes array:', metricTypes);
+            console.groupEnd();
+          }
+
           if (!response.statisticsPool.statsPeriods.length) {
             response = {
               noStats: true,
@@ -219,22 +241,31 @@ export default class PSstatsAPI {
         scriptElement.parentNode.removeChild(scriptElement);
         return true;
       }
-    } catch(error) {
+    } catch (error) {
       console.error(error)
     }
   }
 
-  _buildURL = (metricsGroups, hash, isWebsitesStats, optTimePeriod) => {
+  _buildURL = (metricsGroups, hash, isWebsitesStats, optTimePeriod, limitedOpts = null) => {
     let processedTimePeriod;
     let startDate;
     let endDate;
     let websiteHash = isWebsitesStats ? 'websites-' : '';
+
+    const hasLimitedParams = limitedOpts && (
+      limitedOpts.takeCount !== undefined ||
+      limitedOpts.skipCount !== undefined ||
+      limitedOpts.sortDirection !== undefined
+    );
+
+    let endpoint = hasLimitedParams ? 'get-limited-statistics' : 'get-statistics';
     let baseURL =
-      `https://stats-${websiteHash}api.providesupport.com/api/v1/get-statistics/providesupport/${
+      `https://stats-${websiteHash}api.providesupport.com/api/v1/${endpoint}/providesupport/${
         this.accountName
       }?human-readable-json=false&access_token=${
         this.md5Password}`;
     let metricsInStr = transformMetricsGroupsToStr(metricsGroups);
+
     if (optTimePeriod) {
       processTimePeriodArg(optTimePeriod);
       optTimePeriod.startDate = formatDate(optTimePeriod.startDate);
@@ -256,8 +287,33 @@ export default class PSstatsAPI {
       processedTimePeriod = `${this.duration}&start-date=${startDate.replace(/ /g, '%20')}&end-date=${
         endDate.replace(/ /g, '%20')}`;
     }
-    let queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-names=${
-      processedTimePeriod}&callback=_psHandleStatsResponse_${hash}`;
+
+    let queryParams;
+
+    if (hasLimitedParams) {
+      let durationParam;
+      let startDateParam;
+      let endDateParam;
+
+      if (optTimePeriod) {
+        durationParam = optTimePeriod.duration;
+        startDateParam = optTimePeriod.startDate.replace(/ /g, '%20');
+        endDateParam = optTimePeriod.endDate.replace(/ /g, '%20');
+      } else {
+        durationParam = this.duration;
+        startDateParam = startDate.replace(/ /g, '%20');
+        endDateParam = endDate.replace(/ /g, '%20');
+      }
+
+      const takeCount = limitedOpts.takeCount !== undefined ? limitedOpts.takeCount : 10;
+      const skipCount = limitedOpts.skipCount !== undefined ? limitedOpts.skipCount : 0;
+      const sortDirection = limitedOpts.sortDirection || 'desc';
+      queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-name=${durationParam}&start-date=${startDateParam}&end-date=${endDateParam}&take-count=${takeCount}&skip-count=${skipCount}&sort-direction=${sortDirection}&callback=_psHandleStatsResponse_${hash}`;
+    } else {
+      queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-names=${
+        processedTimePeriod}&callback=_psHandleStatsResponse_${hash}`;
+    }
+
     return baseURL + queryParams;
   }
 
@@ -272,13 +328,76 @@ export default class PSstatsAPI {
     const request = document.createElement('script');
     request.id = `ps_stats_${hash}`;
     request.src = url;
-    const cleanUpAndCall = (event) => {
+    const cleanUpAndCall = event => {
       onloadHandler();
       event.target?.parentNode?.removeChild(event.target);
     };
     request.onload = cleanUpAndCall;
     request.onerror = cleanUpAndCall;
     document.body.appendChild(request);
+  }
+
+  _mergeLimitedAndStandardResults = (counterMetricsMap, valueMetricsMap, opts, callback, timePeriod) => {
+    let counterResult = null;
+    let valueResult = null;
+    let completedRequests = 0;
+
+    const checkComplete = () => {
+      completedRequests++;
+      if (completedRequests === 2) {
+        if (!counterResult && !valueResult) {
+          callback({
+            error: 'Both requests failed',
+            counterError: counterResult?.error,
+            valueError: valueResult?.error,
+          })
+        }
+        const mergedResult = {
+          ...(counterResult || {}),
+          ...(valueResult || {}),
+        };
+        callback(mergedResult);
+      }
+    }
+
+    const limitedMethod = this._limitedRequest(counterMetricsMap, opts);
+    limitedMethod(opts.limitedOpts)(response => {
+      if (!response.error && !response.noStats) {
+        counterResult = response;
+      }
+      checkComplete();
+    }, timePeriod);
+
+    const { limitedOpts, ...standardOpts } = opts;
+    const standardMethod = this._standardRequest(valueMetricsMap, standardOpts);
+    standardMethod(response => {
+      if (!response.error && !response.noStats) {
+        valueResult = response;
+      }
+      checkComplete();
+    }, timePeriod);
+  }
+
+  _createLimitedWebsiteRequest = (baseOpts, fallbackMethod) => (limitedOpts = null) => (callback, timePeriod) => {
+    const counterMetricsMap = {
+      [WEBSITE_HITS_BY_URL]: 'visitsByURL',
+      [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
+    };
+    const valueMetricsMap = {
+      [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
+    };
+
+    if (limitedOpts) {
+      this._mergeLimitedAndStandardResults(
+        counterMetricsMap,
+        valueMetricsMap,
+        { ...baseOpts, limitedOpts },
+        callback,
+        timePeriod,
+      )
+    } else {
+      fallbackMethod(callback, timePeriod);
+    }
   }
 
   /* PUBLICK ******************************************************************************************************* */
@@ -688,15 +807,32 @@ export default class PSstatsAPI {
     [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
   }, { isWebsitesStats: true, customParser: parseWebsiteSummaryData })
 
+  getLimitedWebsiteTrafficSummary = this._createLimitedWebsiteRequest(
+    { isWebsitesStats: true },
+    this.getWebsiteTrafficSummary,
+  )
+
   getWebsiteTrafficTimeline = this._standardRequest({
     [WEBSITE_HITS_BY_URL]: 'visitsByURL',
     [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
     [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
   }, { isWebsitesStats: true, isShouldAddTotals: true })
 
+  getLimitedWebsiteTrafficTimeline = this._createLimitedWebsiteRequest(
+    { isWebsitesStats: true, isShouldAddTotals: true },
+    this.getWebsiteTrafficTimeline,
+  )
+
   getVisitsByURL = this._standardRequest(WEBSITE_HITS_BY_URL, { isWebsitesStats: true })
 
+  getLimitedVisitsByURL = this._limitedRequest(WEBSITE_HITS_BY_URL, { isWebsitesStats: true })
+
   getVisitsByReferrer = this._standardRequest(WEBSITE_VISITORS_BY_REFERRER_URL, { isWebsitesStats: true })
+
+  getLimitedVisitorsByReferrer = this._limitedRequest(
+    WEBSITE_VISITORS_BY_REFERRER_URL,
+    { isWebsitesStats: true },
+  )
 
   getTotalHits = this._standardRequest(WEBSITE_HITS_PER_VISITOR, { isWebsitesStats: true })
 
