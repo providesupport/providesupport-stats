@@ -310,7 +310,7 @@ export default class PSstatsAPI {
       queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-name=${durationParam}&start-date=${startDateParam}&end-date=${endDateParam}&take-count=${takeCount}&skip-count=${skipCount}&sort-direction=${sortDirection}&callback=_psHandleStatsResponse_${hash}`;
     } else {
       queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-names=${
-      processedTimePeriod}&callback=_psHandleStatsResponse_${hash}`;
+        processedTimePeriod}&callback=_psHandleStatsResponse_${hash}`;
     }
 
     return baseURL + queryParams;
@@ -833,6 +833,12 @@ export default class PSstatsAPI {
     { isWebsitesStats: true },
     this.getWebsiteTrafficSummary,
   )
+
+  getWebsiteTrafficTimeline = this._standardRequest({
+    [WEBSITE_HITS_BY_URL]: 'visitsByURL',
+    [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
+    [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
+  }, { isWebsitesStats: true, isShouldAddTotals: true })
 
   getLimitedWebsiteTrafficTimeline = this._createLimitedRequestWithMerge(
     WEBSITE_COUNTER_METRICS,
