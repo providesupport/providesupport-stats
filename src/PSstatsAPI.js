@@ -1,5 +1,5 @@
 /* global localStorage */
-
+/* eslint-disable implicit-arrow-linebreak */
 import './libs/polyfills';
 import * as METRICS from './constants/metrics';
 import {
@@ -114,6 +114,16 @@ import {
   transformMetricsGroupsToStr,
 } from './helpers';
 import md5 from './libs/md5';
+import {
+  DEFAULT_TAKE_COUNT,
+  DEFAULT_SKIP_COUNT,
+  DEFAULT_SORT_DIRECTION,
+  WEBSITE_COUNTER_METRICS,
+  WEBSITE_VALUE_METRICS,
+  CHAT_REFERRERS_COUNTER_METRICS,
+  ACCOUNT_REFERRERS_COUNTER_METRICS,
+  ACCOUNT_VALUE_METRICS,
+} from './constants/limitedRequest.js';
 
 export default class PSstatsAPI {
   constructor(accountName, password, initTimePeriod, isPasswordAlreadyInMd5 = false) {
@@ -153,7 +163,7 @@ export default class PSstatsAPI {
     opts: { ...opts, timePeriod, level },
   })
 
-  _limitedRequest = (metrics, opts) => (limitedOpts = {}) => (callback, timePeriod) => this._retrieveDataByMetrics({
+  _limitedRequest = (metrics, opts) => limitedOpts => (callback, timePeriod) => this._retrieveDataByMetrics({
     metricsGroups: [{ metrics }],
     callback,
     opts: { ...opts, timePeriod, limitedOpts },
@@ -207,19 +217,6 @@ export default class PSstatsAPI {
           this.timeZone = response.statisticsPool.accountInfo.timeZone;
           this.callDistributionMode = response.statisticsPool.accountInfo.callDistributionMode;
           localStorage.setItem(LS_TIMEZONE_KEY, this.timeZone);
-
-          if (response.statisticsPool?.accounts?.[0]?.metricTypes) {
-            const metricTypes = response.statisticsPool.accounts[0].metricTypes;
-            console.group('All Metric Types in Response');
-            console.table(metricTypes.map(metric => ({
-              'Metric Name': metric.mn,
-              Type: metric.cv === 'counter' ? 'Counter' : 'Value',
-              Multiplicity: metric.mu === 'multiple' ? 'Multiple' : 'Single',
-              TMC: metric.tmc !== undefined ? metric.tmc : '-',
-            })));
-            console.log('Full metricTypes array:', metricTypes);
-            console.groupEnd();
-          }
 
           if (!response.statisticsPool.statsPeriods.length) {
             response = {
@@ -305,13 +302,15 @@ export default class PSstatsAPI {
         endDateParam = endDate.replace(/ /g, '%20');
       }
 
-      const takeCount = limitedOpts.takeCount !== undefined ? limitedOpts.takeCount : 10;
-      const skipCount = limitedOpts.skipCount !== undefined ? limitedOpts.skipCount : 0;
-      const sortDirection = limitedOpts.sortDirection || 'desc';
+      const {
+        takeCount = DEFAULT_TAKE_COUNT,
+        skipCount = DEFAULT_SKIP_COUNT,
+        sortDirection = DEFAULT_SORT_DIRECTION,
+      } = limitedOpts;
       queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-name=${durationParam}&start-date=${startDateParam}&end-date=${endDateParam}&take-count=${takeCount}&skip-count=${skipCount}&sort-direction=${sortDirection}&callback=_psHandleStatsResponse_${hash}`;
     } else {
       queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-names=${
-        processedTimePeriod}&callback=_psHandleStatsResponse_${hash}`;
+      processedTimePeriod}&callback=_psHandleStatsResponse_${hash}`;
     }
 
     return baseURL + queryParams;
@@ -378,27 +377,20 @@ export default class PSstatsAPI {
     }, timePeriod);
   }
 
-  _createLimitedWebsiteRequest = (baseOpts, fallbackMethod) => (limitedOpts = null) => (callback, timePeriod) => {
-    const counterMetricsMap = {
-      [WEBSITE_HITS_BY_URL]: 'visitsByURL',
-      [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
+  _createLimitedRequestWithMerge = (counterMetricsMap, valueMetricsMap, baseOpts, fallbackMethod) =>
+    (limitedOpts = null) => (callback, timePeriod) => {
+      if (limitedOpts) {
+        this._mergeLimitedAndStandardResults(
+          counterMetricsMap,
+          valueMetricsMap,
+          { ...baseOpts, limitedOpts },
+          callback,
+          timePeriod,
+        )
+      } else {
+        fallbackMethod(callback, timePeriod);
+      }
     };
-    const valueMetricsMap = {
-      [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
-    };
-
-    if (limitedOpts) {
-      this._mergeLimitedAndStandardResults(
-        counterMetricsMap,
-        valueMetricsMap,
-        { ...baseOpts, limitedOpts },
-        callback,
-        timePeriod,
-      )
-    } else {
-      fallbackMethod(callback, timePeriod);
-    }
-  }
 
   /* PUBLICK ******************************************************************************************************* */
   setTimePeriod = timePeriod => {
@@ -447,7 +439,11 @@ export default class PSstatsAPI {
 
   getPreChatSurveyReferrers = this._standardRequest(CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL)
 
+  getLimitedPreChatSurveyReferrers = this._limitedRequest(CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL)
+
   getOfflineFormReferrers = this._standardRequest(CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL)
+
+  getLimitedOfflineFormReferrers = this._limitedRequest(CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL)
 
   getPreChatSurveySubmitCount = this._standardRequest(CHAT_START_CHAT_FORM_SUBMIT_COUNT)
 
@@ -639,6 +635,13 @@ export default class PSstatsAPI {
     customParser: parseAccountSummaryData,
   })
 
+  getLimitedAccountSummary = this._createLimitedRequestWithMerge(
+    ACCOUNT_REFERRERS_COUNTER_METRICS,
+    ACCOUNT_VALUE_METRICS,
+    { customParser: parseAccountSummaryData },
+    this.getAccountSummary,
+  )
+
   getAccountTimeline = this._standardRequest({
     [CHAT_ONLINE_TIME_PER_ACCOUNT]: 'onlinePresence-chatOnlineTime',
     [CHAT_ACCEPT_CHAT_DELAY_PER_ACCOUNT]: 'averages-chatAcceptTime',
@@ -671,6 +674,13 @@ export default class PSstatsAPI {
     [CHAT_PCS_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-contented',
     [CHAT_PCS_NOT_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-notContented',
   }, { customParser: parseAccountTimelineData, isShouldAddTotals: true })
+
+  getLimitedAccountTimeline = this._createLimitedRequestWithMerge(
+    ACCOUNT_REFERRERS_COUNTER_METRICS,
+    ACCOUNT_VALUE_METRICS,
+    { customParser: parseAccountTimelineData, isShouldAddTotals: true },
+    this.getAccountTimeline,
+  )
 
   getOperatorsSummary = this._standardRequest({
     [CHAT_CHATS_PER_OPERATOR]: 'chatsSent',
@@ -800,6 +810,16 @@ export default class PSstatsAPI {
     [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL]: 'offlineFormReferrers',
   }, { isShouldAddTotals: true, isShouldAddMetricTotals: true })
 
+  getLimitedChatReferrersSummary = this._limitedRequest(
+    CHAT_REFERRERS_COUNTER_METRICS,
+    { customParser: parseSummaryData },
+  )
+
+  getLimitedChatReferrersTimeline = this._limitedRequest(
+    CHAT_REFERRERS_COUNTER_METRICS,
+    { isShouldAddTotals: true, isShouldAddMetricTotals: true },
+  )
+
   /* isWebsitesStats */
   getWebsiteTrafficSummary = this._standardRequest({
     [WEBSITE_HITS_BY_URL]: 'visitsByURL',
@@ -807,18 +827,16 @@ export default class PSstatsAPI {
     [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
   }, { isWebsitesStats: true, customParser: parseWebsiteSummaryData })
 
-  getLimitedWebsiteTrafficSummary = this._createLimitedWebsiteRequest(
+  getLimitedWebsiteTrafficSummary = this._createLimitedRequestWithMerge(
+    WEBSITE_COUNTER_METRICS,
+    WEBSITE_VALUE_METRICS,
     { isWebsitesStats: true },
     this.getWebsiteTrafficSummary,
   )
 
-  getWebsiteTrafficTimeline = this._standardRequest({
-    [WEBSITE_HITS_BY_URL]: 'visitsByURL',
-    [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
-    [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
-  }, { isWebsitesStats: true, isShouldAddTotals: true })
-
-  getLimitedWebsiteTrafficTimeline = this._createLimitedWebsiteRequest(
+  getLimitedWebsiteTrafficTimeline = this._createLimitedRequestWithMerge(
+    WEBSITE_COUNTER_METRICS,
+    WEBSITE_VALUE_METRICS,
     { isWebsitesStats: true, isShouldAddTotals: true },
     this.getWebsiteTrafficTimeline,
   )
