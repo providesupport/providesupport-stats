@@ -37,8 +37,6 @@ import {
   END_DATE,
   END_TIME,
   STATS_PERIOD_ID,
-  ID,
-  VALUE,
   VALUES,
   VALUES_SUM,
 } from '../constants/answerKeys'
@@ -95,7 +93,8 @@ function parseWithOneOfBasicParsers({
 
     if (metric[COUNTER_OR_VALUE] === 'counter') {
       if (metric[MULTIPLE]) {
-        parsedMetrics[metricNameInResponse] = parseMultipleCountersMetric(metric, statsPeriods, isShouldAddTotals, isShouldAddMetricTotals);
+        parsedMetrics[metricNameInResponse]
+          = parseMultipleCountersMetric(metric, statsPeriods, isShouldAddTotals, isShouldAddMetricTotals);
       } else {
         parsedMetrics[metricNameInResponse] = parseCounterMetric(metric[METRICS][0], statsPeriods, isShouldAddTotals);
       }
@@ -168,7 +167,6 @@ export function parseMultipleStructuresMetric(metric, statsPeriods, opts, isShou
 }
 
 function parseStructureMetric(metricItem, statsPeriods, opts, isShouldAddTotals) {
-
   if (!metricItem) return undefined
   let parsedMetric;
   if (isShouldAddTotals) {

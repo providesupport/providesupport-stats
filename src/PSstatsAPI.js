@@ -429,6 +429,8 @@ export default class PSstatsAPI {
     return parsers[name]
   }
 
+  /* Requests for metrics ***** */
+
   getControlPanelLoginCount = this._standardRequest(ADMIN_LOGIN_COUNT)
 
   getWebAgentAppLoginCount = this._standardRequest(WOP_LOGIN_COUNT)
@@ -860,7 +862,7 @@ export default class PSstatsAPI {
 
   getTotalHits = this._standardRequest(WEBSITE_HITS_PER_VISITOR, { isWebsitesStats: true })
 
-  /* custom */
+  /* custom ****** */
   getCustomMetrics = ({ metricsGroups, metrics, opts, callback }) => {
     if (metrics) metricsGroups = [{ metrics }]
     this._retrieveDataByMetrics({ metricsGroups, opts, callback })

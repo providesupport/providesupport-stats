@@ -90,7 +90,7 @@ function tryTransformRateByStatsPeriodToRateByTag(rate) {
 }
 
 function secondLevelTransformationRateToMetric(rate) {
-    if (rate[TAG1] !== undefined) {
+  if (rate[TAG1] !== undefined) {
     rate[METRIC_TAG] = rate[TAG1];
     delete rate[TAG1];
   }

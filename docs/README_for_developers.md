@@ -12,6 +12,7 @@ Library to simplify work with the backend of ProvideSupport statistics
 
 ## Running tests
 
+`nvm i 13`
 `npm run test`
 
 ## Deployment
