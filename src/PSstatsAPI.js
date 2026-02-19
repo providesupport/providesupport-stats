@@ -151,6 +151,7 @@ export default class PSstatsAPI {
 
   /* PRIVATE ******************************************************************************************************* */
 
+  // TODO: убрать, переименовать лимитед реквест в стандарт реквест
   _standardRequest = (metrics, opts) => (callback, timePeriod) => this._retrieveDataByMetrics({
     metricsGroups: [{ metrics }],
     callback,
@@ -163,7 +164,7 @@ export default class PSstatsAPI {
     opts: { ...opts, timePeriod, level },
   })
 
-  _limitedRequest = (metrics, opts) => limitedOpts => (callback, timePeriod) => this._retrieveDataByMetrics({
+  _limitedRequest = (metrics, opts) => (callback, timePeriod, limitedOpts) => this._retrieveDataByMetrics({
     metricsGroups: [{ metrics }],
     callback,
     opts: { ...opts, timePeriod, limitedOpts },
@@ -249,6 +250,7 @@ export default class PSstatsAPI {
     let endDate;
     let websiteHash = isWebsitesStats ? 'websites-' : '';
 
+    // TODO: если ничего не передано, то будет идти запрос на стандартный хендлер
     const hasLimitedParams = limitedOpts && (
       limitedOpts.takeCount !== undefined ||
       limitedOpts.skipCount !== undefined ||
@@ -337,13 +339,16 @@ export default class PSstatsAPI {
   }
 
   _mergeLimitedAndStandardResults = (counterMetricsMap, valueMetricsMap, opts, callback, timePeriod) => {
+    const hasValueMetrics = Object.keys(valueMetricsMap).length > 0;
+    const expectedRequests = hasValueMetrics ? 2 : 1;
+
     let counterResult = null;
     let valueResult = null;
     let completedRequests = 0;
 
     const checkComplete = () => {
       completedRequests++;
-      if (completedRequests === 2) {
+      if (completedRequests === expectedRequests) {
         if (!counterResult && !valueResult) {
           callback({
             error: 'Both requests failed',
@@ -360,25 +365,37 @@ export default class PSstatsAPI {
     }
 
     const limitedMethod = this._limitedRequest(counterMetricsMap, opts);
-    limitedMethod(opts.limitedOpts)(response => {
+    limitedMethod(response => {
       if (!response.error && !response.noStats) {
         counterResult = response;
       }
       checkComplete();
-    }, timePeriod);
+    }, timePeriod, opts.limitedOpts);
 
-    const { limitedOpts, ...standardOpts } = opts;
-    const standardMethod = this._standardRequest(valueMetricsMap, standardOpts);
-    standardMethod(response => {
-      if (!response.error && !response.noStats) {
-        valueResult = response;
-      }
-      checkComplete();
-    }, timePeriod);
+    if (hasValueMetrics) {
+      const { limitedOpts, ...standardOpts } = opts;
+      const standardMethod = this._standardRequest(valueMetricsMap, standardOpts);
+      standardMethod(response => {
+        if (!response.error && !response.noStats) {
+          valueResult = {};
+          for (const [metricKey, targetName] of Object.entries(valueMetricsMap)) {
+            if (response.total && response.timeline && targetName) {
+              valueResult[targetName] = {
+                total: response.total,
+                timeline: response.timeline,
+              };
+            } else if (response[targetName || metricKey]) {
+              valueResult[targetName || metricKey] = response[targetName || metricKey];
+            }
+          }
+        }
+        checkComplete();
+      }, timePeriod);
+    }
   }
 
   _createLimitedRequestWithMerge = (counterMetricsMap, valueMetricsMap, baseOpts, fallbackMethod) =>
-    (limitedOpts = null) => (callback, timePeriod) => {
+    (callback, timePeriod, limitedOpts = null) => {
       if (limitedOpts) {
         this._mergeLimitedAndStandardResults(
           counterMetricsMap,
