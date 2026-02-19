@@ -1,0 +1,213 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>High-level Stats API</title>
+  <script src="PSstatsAPI.js"></script>
+</head>
+<body>
+  <p>open console and run code.</br>'stats' global variable is an API instance</p>
+  <script>
+    const TIME_PERIODS = {
+      PAST_TIME_PERIOD: {
+        duration: 'month',
+        startDate: '01-Jun-1980 21:00:00',
+        endDate: '30-Aug-1982 20:59:59'
+      },
+      FUTURE_TIME_PERIOD: {
+        duration: 'week',
+        startDate: '01-Jun-2050 21:00:00',
+        endDate: '30-Aug-2052 20:59:59'
+      },
+      DEFAULT_TIME_PERIOD: {
+        duration: 'month',
+        startDate: '01-Jun-2019 21:00:00',
+        endDate: '30-Aug-2020 20:59:59'
+      },
+      SHORT_TIME_PERIOD: {
+        duration: 'day',
+        startDate: '01-Jun-2019 21:00:00',
+        endDate: '05-Jun-2019 20:59:59'
+      },
+      SHORT_TIME_PERIOD2: {
+        duration: 'day',
+        startDate: '28-Aug-2019 21:00:00',
+        endDate: '30-Aug-2019 20:59:59'
+      },
+      SHORT_TIME_PERIOD3: {
+        duration: 'day',
+        startDate: '08-May-2020 21:00:00',
+        endDate: '10-May-2020 20:59:59'
+      },
+      SHORT_TIME_PERIOD4: {
+        duration: 'day',
+        startDate: '01-May-2020 21:00:00',
+        endDate: '25-May-2020 20:59:59'
+      },
+      SHORT_TIME_PERIOD5: {
+        duration: 'day',
+        startDate: '10-May-2022 21:00:00',
+        endDate: '25-May-2022 20:59:59'
+      },
+      SHORT_TIME_PERIOD6: {
+        duration: 'day',
+        startDate: 'Sep 01 2022',
+        endDate: 'Sep 03 2022'
+      },
+      SHORT_TIME_PERIOD7: {
+        duration: 'month',
+        startDate: 'Jan 01 2019',
+        endDate: 'Apr 30 2019'
+      },
+      SHORT_TIME_PERIOD8: {
+        duration: 'week',
+        startDate: '22 Oct 2022 00:00:00',
+        endDate: '22 Nov 2022 00:00:00'
+      },
+      SHORT_TIME_PERIOD9: {
+        duration: 'hour',
+        startDate: '22 Oct 2022 00:00:00',
+        endDate: '22 Nov 2022 00:00:00'
+      },
+      SHORT_TIME_PERIOD10: {
+        duration: 'hour',
+        startDate: '05 Mar 2024 00:00:00',
+        endDate: '06 Mar 2024 00:00:00'
+      },
+      INVALID_TIME_PERIODS: [
+        {
+          duration: 'day',
+          startDate: '09.14.2020',
+          endDate: '09.14.2000'
+        },
+        {
+          duration: 'month',
+          startDate: '2000',
+        },
+        {
+          duration: 'month',
+          endDate: '2000',
+        },
+        {
+          startDate: '2000',
+          endDate: '2020'
+        },
+        {
+          duration: 'week',
+          startDate: '30.30.2020',
+          endDate: '10.12.2021'
+        },
+        {
+          duration: 'day',
+          startDate: '10.11.2018',
+          endDate: '20.15.2020'
+        }
+      ],
+    };
+
+    var stats = new PSstatsAPI('providesupport', 'wetesting_master', {
+      duration: 'day',
+      startDate: 'May 1, 2020, 12:00:00 AM',
+      // startDate: 'May 1, 2021, 12:00:00 AM',
+      endDate: 'May 30, 2021, 12:00:00 AM'
+    });
+
+    
+    stats.setTimePeriod(TIME_PERIODS.SHORT_TIME_PERIOD10)
+
+    // console.warn(stats.getParserByName('parseSummaryAllItems'))
+
+    // stats.getCustomMetrics({
+    //   metrics:
+    //   [
+    //     {
+    //       'chat/pcs-proficiency-per-account': 'proficiency',
+    //       'chat/pcs-politeness-per-account': 'politeness',
+    //       'chat/pcs-case-solved-count-per-account': 'caseSolved',
+    //       'chat/pcs-case-not-solved-count-per-account': 'caseNotSolved',
+    //       'chat/pcs-contented-count-per-account': 'contented',
+    //       'chat/pcs-not-contented-count-per-account': 'notContented',
+    //     },
+    //     {
+    //       'chat/pcs-proficiency-per-operator': 'proficiency',
+    //       'chat/pcs-politeness-per-operator': 'politeness',
+    //       'chat/pcs-case-solved-count-per-operator': 'caseSolved',
+    //       'chat/pcs-case-not-solved-count-per-operator': 'caseNotSolved',
+    //       'chat/pcs-contented-count-per-operator': 'contented',
+    //       'chat/pcs-not-contented-count-per-operator': 'notContented',
+    //     },
+    //     {
+    //       'chat/pcs-proficiency-per-department': 'proficiency',
+    //       'chat/pcs-politeness-per-department': 'politeness',
+    //       'chat/pcs-case-solved-count-per-department': 'caseSolved',
+    //       'chat/pcs-case-not-solved-count-per-department': 'caseNotSolved',
+    //       'chat/pcs-contented-count-per-department': 'contented',
+    //       'chat/pcs-not-contented-count-per-department': 'notContented',
+    //     },
+    //   ],
+    //   opts: {
+    //     customParser: 'parseSummaryDataWithLevel',
+    //     level: 'operators',
+    //     timePeriod: TIME_PERIODS.DEFAULT_TIME_PERIOD,
+    //   },
+    //   // callback: res => console.warn(JSON.stringify(res, undefined, 2)),
+    //   callback: res => console.warn(res),
+    // })
+
+    // stats.getPostChatSurveySummary({ 'account': [] }, res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getChatsSummary('operators', res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+
+    // stats.getOperatorsAwayTime(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+
+    // stats.getControlPanelLoginCount(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getChatsSummary(['account'], res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD)
+    // stats.getPreChatSurveySummary(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getChatReferrersTimeline(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getWebsiteTrafficSummary(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getWebsiteTrafficTimeline(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+
+    // stats.getAccountSummary(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getAccountSummary(res => {
+    //   console.log(JSON.parse(JSON.stringify(res)));
+    //   console.log(res.averages.chatAcceptTime);
+    //   console.log(res.averages.durationPerAccount);
+    //   console.log(res.averages.messageCountPerChatPerAccount);
+    // }, TIME_PERIODS.SHORT_TIME_PERIOD10);
+
+    // stats.getAccountTimeline(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.SHORT_TIME_PERIOD);
+    // stats.getAccountTimeline(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.SHORT_TIME_PERIOD5);
+    // stats.getAccountTimeline(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.SHORT_TIME_PERIOD6);
+    // stats.getAccountTimeline(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.SHORT_TIME_PERIOD7);
+
+    // stats.getOperatorsSummary(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+
+    // stats.getOperatorsTimeline(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.SHORT_TIME_PERIOD);
+    // stats.getOperatorsTimeline(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.SHORT_TIME_PERIOD4);
+
+    // stats.getDepartmentsTimeline(res => console.log(res), TIME_PERIODS.SHORT_TIME_PERIOD);
+
+    // stats.getOfflineTime(['departments'], res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.DEFAULT_TIME_PERIOD)
+    // stats.getOfflineTime({operators: 'Talia Bush\ntalia'}, res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.DEFAULT_TIME_PERIOD)
+    // stats.getOfflineTime({departments: 'Sales'}, res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.DEFAULT_TIME_PERIOD)
+    // stats.getOfflineTime({
+    //   operators: 'Olga Bondar\nolkinsmile',
+    //   departments: 'Customer Support'
+    // }, res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.DEFAULT_TIME_PERIOD)
+    // stats.getOfflineTime({
+    //   operators: ['Tanya Laskin\ntanya', 'noSuchOperator','Olga Bondar\nolkinsmile'],
+    //   departments: ['Sales', 'Customer Support', 'noSuchDepart']
+    // }, res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.DEFAULT_TIME_PERIOD)
+
+
+    /* limitedRequest */
+    // stats.getLimitedVisitorsByReferrer({takeCount: 10})(res => {
+    //   console.log(JSON.parse(JSON.stringify(res)));
+    // }, TIME_PERIODS.SHORT_TIME_PERIOD10);
+
+    /* getLimitedWebsiteTrafficTimeline */
+    stats.getLimitedWebsiteTrafficTimeline({takeCount: 10})(res => {
+      console.log(JSON.parse(JSON.stringify(res)));
+    }, TIME_PERIODS.SHORT_TIME_PERIOD10);
+  </script>
+</body>
+</html>

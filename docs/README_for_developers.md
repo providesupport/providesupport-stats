@@ -8,6 +8,7 @@ Library to simplify work with the backend of ProvideSupport statistics
 
 ## Run locally
 
+`nvm i 13`
 `npm run dev`
 
 ## Running tests
