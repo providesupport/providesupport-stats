@@ -287,10 +287,12 @@ export function parseWebsiteSummaryData({ metrics, statsPeriods, opts }) {
   let parsedData = parseSummaryData({ metrics, statsPeriods, opts });
   parsedData['visitsByReferrer'] = {};
   const visitsByReferrerMetric = metrics['website/visitors-by-referrer-url'];
-  const metricItems = visitsByReferrerMetric[METRICS];
-  for (let metricItemInd = 0; metricItemInd < metricItems.length; metricItemInd++) {
-    let metricItemName = metricItems[metricItemInd][METRIC_TAG];
-    parsedData['visitsByReferrer'][metricItemName] = metricItems[metricItemInd][TOTAL];
+  if (visitsByReferrerMetric != null && visitsByReferrerMetric[METRICS]) {
+    const metricItems = visitsByReferrerMetric[METRICS];
+    for (let metricItemInd = 0; metricItemInd < metricItems.length; metricItemInd++) {
+      let metricItemName = metricItems[metricItemInd][METRIC_TAG];
+      parsedData['visitsByReferrer'][metricItemName] = metricItems[metricItemInd][TOTAL];
+    }
   }
   return parsedData;
 }
@@ -305,11 +307,17 @@ export function parseAccountSummaryData({ metrics, statsPeriods, opts }) {
   if (parsedData['onlinePresence-chatOnlineTime'] === NO_STATS_METRIC_MSG) {
     parsedData['onlinePresence-chatOfflineTime'] = NOT_ENOUGH_STATS_MSG;
   } else {
-    let totalOfflineTime = Math.ceil(
-      totalTimeInSeconds - parsedData['onlinePresence-chatOnlineTime'][TOTAL],
-    );
-    parsedData['onlinePresence-chatOfflineTime'] = { total: totalOfflineTime > 0 ? totalOfflineTime : 0 };
-    handleSummaryValue(parsedData, 'onlinePresence-chatOfflineTime', TOTAL, true);
+    const onlineTimeData = parsedData['onlinePresence-chatOnlineTime'];
+    const hasValidOnlineTime = onlineTimeData != null
+      && typeof onlineTimeData === 'object'
+      && TOTAL in onlineTimeData;
+    if (hasValidOnlineTime) {
+      const totalOfflineTime = Math.ceil(totalTimeInSeconds - onlineTimeData[TOTAL]);
+      parsedData['onlinePresence-chatOfflineTime'] = { total: totalOfflineTime > 0 ? totalOfflineTime : 0 };
+      handleSummaryValue(parsedData, 'onlinePresence-chatOfflineTime', TOTAL, true);
+    } else {
+      parsedData['onlinePresence-chatOfflineTime'] = NOT_ENOUGH_STATS_MSG;
+    }
   }
   handleSummaryValue(parsedData, 'onlinePresence-chatOnlineTime', TOTAL, true);
   handleSummaryValue(parsedData, 'averages-chatAcceptTime', 'average', true);
@@ -367,22 +375,30 @@ export function parseAccountTimelineData({ metrics, statsPeriods, opts }) {
   if (parsedMetrics['onlinePresence-chatOnlineTime'] === NO_STATS_METRIC_MSG) {
     parsedMetrics['onlinePresence-chatOfflineTime'] = NOT_ENOUGH_STATS_MSG;
   } else {
-    parsedMetrics['onlinePresence-chatOfflineTime'] = { total: 0, timeline: [] };
-    for (let ii = 0; ii < parsedMetrics['onlinePresence-chatOnlineTime']['timeline'].length; ii++) {
-      result = {};
-      currentPeriodObj = parsedMetrics['onlinePresence-chatOnlineTime']['timeline'][ii];
-      currentPeriodStr = Object.keys(currentPeriodObj)[0];
-      currentPeriods = currentPeriodStr.split(' - ');
-      UTCstartDate = `${currentPeriods[0].replace(/-/g, ' ')} GMT-4`;
-      UTCendDate = `${currentPeriods[1].replace(/-/g, ' ')} GMT-4`;
-      totalTimeInSeconds = (Date.parse(UTCendDate) - Date.parse(UTCstartDate)) / 1000;
-      offlineTime = Math.ceil(totalTimeInSeconds - currentPeriodObj[currentPeriodStr][TOTAL]);
-      totalOfflineTime += offlineTime > 0 ? offlineTime : 0;
-      result[currentPeriodStr] = { total: offlineTime > 0 ? offlineTime : 0 };
-      parsedMetrics['onlinePresence-chatOfflineTime']['timeline'].push(result);
+    const onlineMetric = parsedMetrics['onlinePresence-chatOnlineTime'];
+    const hasValidTimeline = onlineMetric != null
+      && typeof onlineMetric === 'object'
+      && Array.isArray(onlineMetric.timeline);
+    if (hasValidTimeline) {
+      parsedMetrics['onlinePresence-chatOfflineTime'] = { total: 0, timeline: [] };
+      for (let ii = 0; ii < parsedMetrics['onlinePresence-chatOnlineTime']['timeline'].length; ii++) {
+        result = {};
+        currentPeriodObj = parsedMetrics['onlinePresence-chatOnlineTime']['timeline'][ii];
+        currentPeriodStr = Object.keys(currentPeriodObj)[0];
+        currentPeriods = currentPeriodStr.split(' - ');
+        UTCstartDate = `${currentPeriods[0].replace(/-/g, ' ')} GMT-4`;
+        UTCendDate = `${currentPeriods[1].replace(/-/g, ' ')} GMT-4`;
+        totalTimeInSeconds = (Date.parse(UTCendDate) - Date.parse(UTCstartDate)) / 1000;
+        offlineTime = Math.ceil(totalTimeInSeconds - currentPeriodObj[currentPeriodStr][TOTAL]);
+        totalOfflineTime += offlineTime > 0 ? offlineTime : 0;
+        result[currentPeriodStr] = { total: offlineTime > 0 ? offlineTime : 0 };
+        parsedMetrics['onlinePresence-chatOfflineTime']['timeline'].push(result);
+      }
+      parsedMetrics['onlinePresence-chatOfflineTime'][TOTAL] = totalOfflineTime;
+      handleSummaryValueByPeriods(parsedMetrics['onlinePresence-chatOfflineTime'], TOTAL, true, true)
+    } else {
+      parsedMetrics['onlinePresence-chatOfflineTime'] = NOT_ENOUGH_STATS_MSG;
     }
-    parsedMetrics['onlinePresence-chatOfflineTime'][TOTAL] = totalOfflineTime;
-    handleSummaryValueByPeriods(parsedMetrics['onlinePresence-chatOfflineTime'], TOTAL, true, true);
   }
   handleSummaryValueByPeriods(parsedMetrics['onlinePresence-chatOnlineTime'], TOTAL, true);
   handleSummaryValueByPeriods(parsedMetrics['averages-chatAcceptTime'], 'average', true);

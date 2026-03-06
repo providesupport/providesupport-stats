@@ -19,6 +19,7 @@ import {
   CHAT_ONLINE_TIME_PER_ACCOUNT,
   CHAT_ONLINE_TIME_PER_OPERATOR,
   CHAT_ONLINE_TIME_PER_DEPARTMENT,
+  isCounterMetric,
 } from './constants/metrics';
 import {
   TOTAL,
@@ -390,6 +391,33 @@ export function transformMetricsToObj(metrics) {
     return metrics.reduce((res, current) => Object.assign(res, transformMetricsToObj(current)), {});
   }
   return metrics
+}
+
+export function splitMetricsByCounterAndValue(metricsMap) {
+  const counterMetricsMap = {};
+  const valueMetricsMap = {};
+  for (const [key, targetName] of Object.entries(metricsMap)) {
+    const name = targetName && typeof targetName === 'string' ? targetName : key;
+    if (isCounterMetric(key)) {
+      counterMetricsMap[key] = name;
+    } else {
+      valueMetricsMap[key] = name;
+    }
+  }
+  return {
+    counterMetricsMap,
+    valueMetricsMap,
+    hasCounterMetrics: Object.keys(counterMetricsMap).length > 0,
+    hasValueMetrics: Object.keys(valueMetricsMap).length > 0,
+  };
+}
+
+export function isNestedSummaryShape(obj) {
+  return obj != null
+    && typeof obj === 'object'
+    && !Array.isArray(obj)
+    && 'onlinePresence' in obj
+    && typeof obj.onlinePresence === 'object'
 }
 
 export function transformMetricsGroupsToStr(metricsGroups) {
