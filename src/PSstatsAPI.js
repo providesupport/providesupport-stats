@@ -112,18 +112,64 @@ import {
   formatDate,
   transformMetricsToObj,
   transformMetricsGroupsToStr,
+  splitMetricsByCounterAndValue,
+  isNestedSummaryShape,
 } from './helpers';
 import md5 from './libs/md5';
-import {
-  DEFAULT_TAKE_COUNT,
-  DEFAULT_SKIP_COUNT,
-  DEFAULT_SORT_DIRECTION,
-  WEBSITE_COUNTER_METRICS,
-  WEBSITE_VALUE_METRICS,
-  CHAT_REFERRERS_COUNTER_METRICS,
-  ACCOUNT_REFERRERS_COUNTER_METRICS,
-  ACCOUNT_VALUE_METRICS,
-} from './constants/limitedRequest.js';
+
+export const DEFAULT_TAKE_COUNT = 10;
+export const DEFAULT_SKIP_COUNT = 0;
+export const DEFAULT_SORT_DIRECTION = 'desc';
+
+export const WEBSITE_COUNTER_METRICS = {
+  [WEBSITE_HITS_BY_URL]: 'visitsByURL',
+  [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
+};
+
+export const WEBSITE_VALUE_METRICS = {
+  [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
+};
+
+export const CHAT_REFERRERS_COUNTER_METRICS = {
+  [CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL]: 'preChatSurveyReferrers',
+  [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL]: 'offlineFormReferrers',
+};
+
+export const ACCOUNT_REFERRERS_COUNTER_METRICS = {
+  [CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL]: 'preChatSurvey-referrers',
+  [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL]: 'offlineForm-referrers',
+};
+
+export const ACCOUNT_VALUE_METRICS = {
+  [CHAT_ONLINE_TIME_PER_ACCOUNT]: 'onlinePresence-chatOnlineTime',
+  [CHAT_ACCEPT_CHAT_DELAY_PER_ACCOUNT]: 'averages-chatAcceptTime',
+  [CHAT_START_CHAT_FORM_FILLOUT_TIME]: 'averages-preChatSurveyFilloutTime',
+  [CHAT_LEAVE_MESSAGE_FORM_FILLOUT_TIME]: 'averages-offlineFormFilloutTime',
+  [CHAT_VISITOR_MESSAGES_COUNT_PER_CHAT]: 'averages-visitorMessagesPerChat',
+  [CHAT_ALL_OPERATORS_MESSAGES_COUNT_PER_CHAT]: 'averages-operatorMessagesPerChat',
+  [CHAT_OPERATOR_RESPONSE_TIME_PER_ACCOUNT]: 'averages-operatorResponseTime',
+  [CHAT_VISITOR_RESPONSE_TIME]: 'averages-visitorResponseTime',
+  [CHAT_START_CHAT_FORM_OPEN_COUNT]: 'preChatSurvey-loads',
+  [CHAT_START_CHAT_FORM_SUBMIT_COUNT]: 'preChatSurvey-submits',
+  [CHAT_PRE_CHAT_SURVEY_CLICK_TROUGH_RATE]: 'preChatSurvey-clickThroughRate',
+  [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT]: 'offlineForm-loads',
+  [CHAT_OFFLINE_MESSAGE_COUNT]: 'offlineForm-submits',
+  [CHAT_OFFLINE_FORM_CLICK_TROUGH_RATE]: 'offlineForm-clickThroughRate',
+  [CHAT_CHATS_PER_ACCOUNT]: 'chats-sent',
+  [CHAT_ACCEPTED_CHATS_PER_ACCOUNT]: 'chats-accepted',
+  [CHAT_ACCEPTANCE_RATE]: 'chats-acceptanceRate',
+  [CHAT_MISSED_CALLS_PER_ACCOUNT]: 'chats-missed',
+  [CHAT_INVITATION_SENT_COUNT_PER_ACCOUNT]: 'proactiveChats-sent',
+  [CHAT_INVITATION_ACCEPT_COUNT_PER_ACCOUNT]: 'proactiveChats-accepted',
+  [CHAT_PROACTIVE_ACCEPTANCE_RATE]: 'proactiveChats-acceptanceRate',
+  [CHAT_INVITATION_DECLINE_COUNT_PER_ACCOUNT]: 'proactiveChats-declined',
+  [CHAT_PCS_PROFICIENCY_PER_ACCOUNT]: 'postChatSurvey-proficiency',
+  [CHAT_PCS_POLITENESS_PER_ACCOUNT]: 'postChatSurvey-politeness',
+  [CHAT_PCS_CASE_SOLVED_COUNT_PER_ACCOUNT]: 'postChatSurvey-caseSolved',
+  [CHAT_PCS_CASE_NOT_SOLVED_COUNT_PER_ACCOUNT]: 'postChatSurvey-caseNotSolved',
+  [CHAT_PCS_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-contented',
+  [CHAT_PCS_NOT_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-notContented',
+};
 
 export default class PSstatsAPI {
   constructor(accountName, password, initTimePeriod, isPasswordAlreadyInMd5 = false) {
@@ -151,23 +197,24 @@ export default class PSstatsAPI {
 
   /* PRIVATE ******************************************************************************************************* */
 
-  // TODO: убрать, переименовать лимитед реквест в стандарт реквест
-  _standardRequest = (metrics, opts) => (callback, timePeriod) => this._retrieveDataByMetrics({
-    metricsGroups: [{ metrics }],
-    callback,
-    opts: { ...opts, timePeriod },
-  })
+  _standardRequest = (metrics, opts) => (callback, timePeriod, limitedOpts) => {
+    const fullOpts = { ...opts, timePeriod, limitedOpts };
+
+    if (limitedOpts == null) {
+      return this._retrieveDataByMetrics({
+        metricsGroups: [{ metrics }],
+        callback,
+        opts: { ...opts, timePeriod, limitedOpts },
+      });
+    }
+    const metricsMap = transformMetricsToObj(metrics);
+    this._requestByCounterAndValue(metricsMap, fullOpts, callback);
+  };
 
   _requestWithLevel = (metrics, opts) => (level, callback, timePeriod) => this._retrieveDataByMetrics({
     metricsGroups: [{ metrics }],
     callback,
     opts: { ...opts, timePeriod, level },
-  })
-
-  _limitedRequest = (metrics, opts) => (callback, timePeriod, limitedOpts) => this._retrieveDataByMetrics({
-    metricsGroups: [{ metrics }],
-    callback,
-    opts: { ...opts, timePeriod, limitedOpts },
   })
 
   _retrieveDataByMetrics = ({ metricsGroups, callback, opts }) => {
@@ -226,7 +273,9 @@ export default class PSstatsAPI {
               startDate: new Date(opts.timePeriod.startDate),
               endDate: new Date(opts.timePeriod.endDate),
             };
-          } else response = parseRawResponse(response, metricsGroups, opts);
+          } else {
+            response = parseRawResponse(response, metricsGroups, opts);
+          }
         }
         delete this.rawResponses[hash];
         delete window[`_psHandleStatsResponse_${hash}`];
@@ -244,20 +293,14 @@ export default class PSstatsAPI {
     }
   }
 
-  _buildURL = (metricsGroups, hash, isWebsitesStats, optTimePeriod, limitedOpts = null) => {
+  _buildURL = (metricsGroups, hash, isWebsitesStats, optTimePeriod, limitedOpts) => {
     let processedTimePeriod;
     let startDate;
     let endDate;
     let websiteHash = isWebsitesStats ? 'websites-' : '';
-
-    // TODO: если ничего не передано, то будет идти запрос на стандартный хендлер
-    const hasLimitedParams = limitedOpts && (
-      limitedOpts.takeCount !== undefined ||
-      limitedOpts.skipCount !== undefined ||
-      limitedOpts.sortDirection !== undefined
-    );
-
+    const hasLimitedParams = limitedOpts != null;
     let endpoint = hasLimitedParams ? 'get-limited-statistics' : 'get-statistics';
+
     let baseURL =
       `https://stats-${websiteHash}api.providesupport.com/api/v1/${endpoint}/providesupport/${
         this.accountName
@@ -288,12 +331,10 @@ export default class PSstatsAPI {
     }
 
     let queryParams;
-
     if (hasLimitedParams) {
       let durationParam;
       let startDateParam;
       let endDateParam;
-
       if (optTimePeriod) {
         durationParam = optTimePeriod.duration;
         startDateParam = optTimePeriod.startDate.replace(/ /g, '%20');
@@ -303,18 +344,19 @@ export default class PSstatsAPI {
         startDateParam = startDate.replace(/ /g, '%20');
         endDateParam = endDate.replace(/ /g, '%20');
       }
-
       const {
         takeCount = DEFAULT_TAKE_COUNT,
         skipCount = DEFAULT_SKIP_COUNT,
         sortDirection = DEFAULT_SORT_DIRECTION,
       } = limitedOpts;
-      queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-name=${durationParam}&start-date=${startDateParam}&end-date=${endDateParam}&take-count=${takeCount}&skip-count=${skipCount}&sort-direction=${sortDirection}&callback=_psHandleStatsResponse_${hash}`;
+      queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}` +
+        `&duration-name=${durationParam}&start-date=${startDateParam}&end-date=${endDateParam}` +
+        `&take-count=${takeCount}&skip-count=${skipCount}&sort-direction=${sortDirection}` +
+        `&callback=_psHandleStatsResponse_${hash}`;
     } else {
       queryParams = `${'&timezone=' + 'ACCOUNT' + '&metric-names='}${metricsInStr}&duration-names=${
         processedTimePeriod}&callback=_psHandleStatsResponse_${hash}`;
     }
-
     return baseURL + queryParams;
   }
 
@@ -338,76 +380,145 @@ export default class PSstatsAPI {
     document.body.appendChild(request);
   }
 
-  _mergeLimitedAndStandardResults = (counterMetricsMap, valueMetricsMap, opts, callback, timePeriod) => {
-    const hasValueMetrics = Object.keys(valueMetricsMap).length > 0;
+  _mergeLimitedAndStandardResults = (metricsMap, opts, callback) => {
+    const { counterMetricsMap, valueMetricsMap, hasValueMetrics } = splitMetricsByCounterAndValue(metricsMap);
     const expectedRequests = hasValueMetrics ? 2 : 1;
 
     let counterResult = null;
     let valueResult = null;
+    let counterError = null;
+    let valueError = null;
     let completedRequests = 0;
 
     const checkComplete = () => {
       completedRequests++;
-      if (completedRequests === expectedRequests) {
-        if (!counterResult && !valueResult) {
-          callback({
-            error: 'Both requests failed',
-            counterError: counterResult?.error,
-            valueError: valueResult?.error,
-          })
+      if (completedRequests !== expectedRequests) return;
+
+      let mergedResult;
+      const valueIsNestedSummary = isNestedSummaryShape(valueResult);
+
+      if (valueIsNestedSummary && counterResult != null && typeof counterResult === 'object') {
+        mergedResult = { ...valueResult };
+        if (counterResult.preChatSurvey != null && 'referrers' in counterResult.preChatSurvey) {
+          mergedResult.preChatSurvey = {
+            ...mergedResult.preChatSurvey,
+            referrers: counterResult.preChatSurvey.referrers,
+          };
         }
-        const mergedResult = {
+        if (counterResult.offlineForm != null && 'referrers' in counterResult.offlineForm) {
+          mergedResult.offlineForm = {
+            ...mergedResult.offlineForm,
+            referrers: counterResult.offlineForm.referrers,
+          };
+        }
+      } else {
+        mergedResult = {
           ...(counterResult || {}),
           ...(valueResult || {}),
-        };
-        callback(mergedResult);
+        }
       }
-    }
 
-    const limitedMethod = this._limitedRequest(counterMetricsMap, opts);
-    limitedMethod(response => {
-      if (!response.error && !response.noStats) {
-        counterResult = response;
+      if (counterError && valueError) {
+        callback({
+          error: 'Both requests failed',
+          counterError,
+          valueError,
+        });
+        return;
       }
-      checkComplete();
-    }, timePeriod, opts.limitedOpts);
 
-    if (hasValueMetrics) {
-      const { limitedOpts, ...standardOpts } = opts;
-      const standardMethod = this._standardRequest(valueMetricsMap, standardOpts);
-      standardMethod(response => {
-        if (!response.error && !response.noStats) {
-          valueResult = {};
-          for (const [metricKey, targetName] of Object.entries(valueMetricsMap)) {
-            if (response.total && response.timeline && targetName) {
-              valueResult[targetName] = {
-                total: response.total,
-                timeline: response.timeline,
-              };
-            } else if (response[targetName || metricKey]) {
-              valueResult[targetName || metricKey] = response[targetName || metricKey];
-            }
-          }
+      if (counterError || valueError) {
+        callback({
+          data: mergedResult,
+          partial: true,
+          warnings: {
+            ...(counterError && { counterError }),
+            ...(valueError && { valueError }),
+          },
+        });
+        return;
+      }
+
+      callback(mergedResult);
+    };
+
+    this._retrieveDataByMetrics({
+      metricsGroups: [{ metrics: counterMetricsMap }],
+      callback: response => {
+        if (response.error || response.noStats) {
+          counterError = response;
+        } else {
+          counterResult = response;
         }
         checkComplete();
-      }, timePeriod);
+      },
+      opts,
+    })
+
+    if (hasValueMetrics) {
+      const { limitedOpts: _dropped, ...optsWithoutLimited } = opts;
+      this._retrieveDataByMetrics({
+        metricsGroups: [{ metrics: valueMetricsMap }],
+        callback: response => {
+          if (response.error || response.noStats) {
+            valueError = response;
+          } else {
+            const isNestedSummary = isNestedSummaryShape(response);
+            if (isNestedSummary) {
+              valueResult = response;
+            } else {
+              valueResult = {};
+              for (const [metricKey, targetName] of Object.entries(valueMetricsMap)) {
+                const name = targetName || metricKey;
+                if (response.total != null && response.timeline != null && targetName) {
+                  valueResult[targetName] = {
+                    total: response.total,
+                    timeline: response.timeline,
+                  };
+                } else if (response[name] !== undefined) {
+                  valueResult[name] = response[name];
+                } else if (response[metricKey] !== undefined) {
+                  valueResult[name] = response[metricKey];
+                } else {
+                  valueResult[name] = response;
+                }
+              }
+            }
+          }
+          checkComplete();
+        },
+        opts: optsWithoutLimited,
+      })
     }
   }
 
-  _createLimitedRequestWithMerge = (counterMetricsMap, valueMetricsMap, baseOpts, fallbackMethod) =>
-    (callback, timePeriod, limitedOpts = null) => {
-      if (limitedOpts) {
-        this._mergeLimitedAndStandardResults(
-          counterMetricsMap,
-          valueMetricsMap,
-          { ...baseOpts, limitedOpts },
-          callback,
-          timePeriod,
-        )
-      } else {
-        fallbackMethod(callback, timePeriod);
-      }
-    };
+  _requestByCounterAndValue = (metricsMap, opts, callback) => {
+    const {
+      counterMetricsMap,
+      valueMetricsMap,
+      hasCounterMetrics,
+      hasValueMetrics,
+    } = splitMetricsByCounterAndValue(metricsMap);
+
+    if (hasCounterMetrics && hasValueMetrics) {
+      this._mergeLimitedAndStandardResults(metricsMap, opts, callback);
+      return;
+    }
+    if (hasCounterMetrics) {
+      this._retrieveDataByMetrics({
+        metricsGroups: [{ metrics: counterMetricsMap }],
+        callback,
+        opts,
+      });
+      return;
+    }
+    const { limitedOpts: _dropped, ...optsWithoutLimited } = opts;
+    this._retrieveDataByMetrics({
+      metricsGroups: [{ metrics: valueMetricsMap }],
+      callback,
+      opts: optsWithoutLimited,
+    });
+  }
 
   /* PUBLICK ******************************************************************************************************* */
   setTimePeriod = timePeriod => {
@@ -458,11 +569,7 @@ export default class PSstatsAPI {
 
   getPreChatSurveyReferrers = this._standardRequest(CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL)
 
-  getLimitedPreChatSurveyReferrers = this._limitedRequest(CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL)
-
   getOfflineFormReferrers = this._standardRequest(CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL)
-
-  getLimitedOfflineFormReferrers = this._limitedRequest(CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL)
 
   getPreChatSurveySubmitCount = this._standardRequest(CHAT_START_CHAT_FORM_SUBMIT_COUNT)
 
@@ -654,13 +761,6 @@ export default class PSstatsAPI {
     customParser: parseAccountSummaryData,
   })
 
-  getLimitedAccountSummary = this._createLimitedRequestWithMerge(
-    ACCOUNT_REFERRERS_COUNTER_METRICS,
-    ACCOUNT_VALUE_METRICS,
-    { customParser: parseAccountSummaryData },
-    this.getAccountSummary,
-  )
-
   getAccountTimeline = this._standardRequest({
     [CHAT_ONLINE_TIME_PER_ACCOUNT]: 'onlinePresence-chatOnlineTime',
     [CHAT_ACCEPT_CHAT_DELAY_PER_ACCOUNT]: 'averages-chatAcceptTime',
@@ -693,13 +793,6 @@ export default class PSstatsAPI {
     [CHAT_PCS_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-contented',
     [CHAT_PCS_NOT_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-notContented',
   }, { customParser: parseAccountTimelineData, isShouldAddTotals: true })
-
-  getLimitedAccountTimeline = this._createLimitedRequestWithMerge(
-    ACCOUNT_REFERRERS_COUNTER_METRICS,
-    ACCOUNT_VALUE_METRICS,
-    { customParser: parseAccountTimelineData, isShouldAddTotals: true },
-    this.getAccountTimeline,
-  )
 
   getOperatorsSummary = this._standardRequest({
     [CHAT_CHATS_PER_OPERATOR]: 'chatsSent',
@@ -829,16 +922,6 @@ export default class PSstatsAPI {
     [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL]: 'offlineFormReferrers',
   }, { isShouldAddTotals: true, isShouldAddMetricTotals: true })
 
-  getLimitedChatReferrersSummary = this._limitedRequest(
-    CHAT_REFERRERS_COUNTER_METRICS,
-    { customParser: parseSummaryData },
-  )
-
-  getLimitedChatReferrersTimeline = this._limitedRequest(
-    CHAT_REFERRERS_COUNTER_METRICS,
-    { isShouldAddTotals: true, isShouldAddMetricTotals: true },
-  )
-
   /* isWebsitesStats */
   getWebsiteTrafficSummary = this._standardRequest({
     [WEBSITE_HITS_BY_URL]: 'visitsByURL',
@@ -846,42 +929,35 @@ export default class PSstatsAPI {
     [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
   }, { isWebsitesStats: true, customParser: parseWebsiteSummaryData })
 
-  getLimitedWebsiteTrafficSummary = this._createLimitedRequestWithMerge(
-    WEBSITE_COUNTER_METRICS,
-    WEBSITE_VALUE_METRICS,
-    { isWebsitesStats: true },
-    this.getWebsiteTrafficSummary,
-  )
-
   getWebsiteTrafficTimeline = this._standardRequest({
     [WEBSITE_HITS_BY_URL]: 'visitsByURL',
     [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
     [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
   }, { isWebsitesStats: true, isShouldAddTotals: true })
 
-  getLimitedWebsiteTrafficTimeline = this._createLimitedRequestWithMerge(
-    WEBSITE_COUNTER_METRICS,
-    WEBSITE_VALUE_METRICS,
-    { isWebsitesStats: true, isShouldAddTotals: true },
-    this.getWebsiteTrafficTimeline,
-  )
-
   getVisitsByURL = this._standardRequest(WEBSITE_HITS_BY_URL, { isWebsitesStats: true })
 
-  getLimitedVisitsByURL = this._limitedRequest(WEBSITE_HITS_BY_URL, { isWebsitesStats: true })
-
   getVisitsByReferrer = this._standardRequest(WEBSITE_VISITORS_BY_REFERRER_URL, { isWebsitesStats: true })
-
-  getLimitedVisitorsByReferrer = this._limitedRequest(
-    WEBSITE_VISITORS_BY_REFERRER_URL,
-    { isWebsitesStats: true },
-  )
 
   getTotalHits = this._standardRequest(WEBSITE_HITS_PER_VISITOR, { isWebsitesStats: true })
 
   /* custom ****** */
-  getCustomMetrics = ({ metricsGroups, metrics, opts, callback }) => {
-    if (metrics) metricsGroups = [{ metrics }]
-    this._retrieveDataByMetrics({ metricsGroups, opts, callback })
+  getCustomMetrics = ({ metricsGroups, metrics, opts = {}, callback }) => {
+    if (metrics) metricsGroups = [{ metrics }];
+    const optsWithTime = { ...opts, timePeriod: opts.timePeriod ?? this.getTimePeriod() };
+
+    if (optsWithTime.limitedOpts != null) {
+      const metricsMap = metricsGroups.length === 1
+        ? transformMetricsToObj(metricsGroups[0].metrics)
+        : metricsGroups.reduce((acc, groups) => Object.assign(acc, transformMetricsToObj(groups.metrics)), {});
+      this._requestByCounterAndValue(metricsMap, optsWithTime, callback);
+      return;
+    }
+
+    return this._retrieveDataByMetrics({
+      metricsGroups,
+      callback,
+      opts: optsWithTime,
+    });
   }
 }

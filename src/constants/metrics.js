@@ -98,3 +98,12 @@ export function isRatesByStatsPeriod(key) {
     CHAT_OFFLINE_FORM_CLICK_TROUGH_RATE,
   ].indexOf(key) !== -1
 }
+
+export function isCounterMetric(key) {
+  return [
+    WEBSITE_HITS_BY_URL,
+    WEBSITE_VISITORS_BY_REFERRER_URL,
+    CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL,
+    CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL,
+  ].indexOf(key) !== -1
+}
