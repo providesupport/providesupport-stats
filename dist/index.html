@@ -204,10 +204,10 @@
     //   console.log(JSON.parse(JSON.stringify(res)));
     // }, TIME_PERIODS.SHORT_TIME_PERIOD10);
 
-    /* getLimitedWebsiteTrafficTimeline */
-    stats.getLimitedWebsiteTrafficTimeline({takeCount: 10})(res => {
+    /* getWebsiteTrafficTimeline */
+    stats.getWebsiteTrafficTimeline(res => {
       console.log(JSON.parse(JSON.stringify(res)));
-    }, TIME_PERIODS.SHORT_TIME_PERIOD10);
+    }, TIME_PERIODS.SHORT_TIME_PERIOD10, { takeCount: 10 });
   </script>
 </body>
 </html>
