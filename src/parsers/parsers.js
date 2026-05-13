@@ -285,9 +285,9 @@ export function parseTimelineData({ metrics, statsPeriods, opts }) {
 
 export function parseWebsiteSummaryData({ metrics, statsPeriods, opts }) {
   let parsedData = parseSummaryData({ metrics, statsPeriods, opts });
-  parsedData['visitsByReferrer'] = {};
   const visitsByReferrerMetric = metrics['website/visitors-by-referrer-url']; // todo: WEBSITE_VISITORS_BY_REFERRER_URL
   if (visitsByReferrerMetric != null && visitsByReferrerMetric[METRICS]) {
+    parsedData['visitsByReferrer'] = {};
     const metricItems = visitsByReferrerMetric[METRICS];
     for (let metricItemInd = 0; metricItemInd < metricItems.length; metricItemInd++) {
       let metricItemName = metricItems[metricItemInd][METRIC_TAG];

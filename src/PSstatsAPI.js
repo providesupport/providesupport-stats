@@ -198,17 +198,16 @@ export default class PSstatsAPI {
   /* PRIVATE ******************************************************************************************************* */
 
   _standardRequest = (metrics, opts) => (callback, timePeriod, limitedOpts) => {
-    const fullOpts = { ...opts, timePeriod, limitedOpts };
-
     if (limitedOpts == null) {
       return this._retrieveDataByMetrics({
         metricsGroups: [{ metrics }],
         callback,
-        opts: { ...opts, timePeriod, limitedOpts },
+        opts: { ...opts, timePeriod },
       });
     }
-    const metricsMap = transformMetricsToObj(metrics);
-    this._requestByCounterAndValue(metricsMap, fullOpts, callback);
+    validateArgument(limitedOpts, 'LIMITED_OPTS');
+    const fullOpts = { ...opts, timePeriod, limitedOpts };
+    this._mergeLimitedAndStandardResults(metrics, fullOpts, callback);
   };
 
   _requestWithLevel = (metrics, opts) => (level, callback, timePeriod) => this._retrieveDataByMetrics({
@@ -380,9 +379,15 @@ export default class PSstatsAPI {
     document.body.appendChild(request);
   }
 
-  _mergeLimitedAndStandardResults = (metricsMap, opts, callback) => {
-    const { counterMetricsMap, valueMetricsMap, hasValueMetrics } = splitMetricsByCounterAndValue(metricsMap);
-    const expectedRequests = hasValueMetrics ? 2 : 1;
+  _mergeLimitedAndStandardResults = (metrics, opts, callback) => {
+    const metricsMap = transformMetricsToObj(metrics);
+    const {
+      counterMetricsMap,
+      valueMetricsMap,
+      hasCounterMetrics,
+      hasValueMetrics,
+    } = splitMetricsByCounterAndValue(metricsMap);
+    const expectedRequests = (hasCounterMetrics ? 1 : 0) + (hasValueMetrics ? 1 : 0);
 
     let counterResult = null;
     let valueResult = null;
@@ -442,18 +447,20 @@ export default class PSstatsAPI {
       callback(mergedResult);
     };
 
-    this._retrieveDataByMetrics({
-      metricsGroups: [{ metrics: counterMetricsMap }],
-      callback: response => {
-        if (response.error || response.noStats) {
-          counterError = response;
-        } else {
-          counterResult = response;
-        }
-        checkComplete();
-      },
-      opts,
-    })
+    if (hasCounterMetrics) {
+      this._retrieveDataByMetrics({
+        metricsGroups: [{ metrics: counterMetricsMap }],
+        callback: response => {
+          if (response.error || response.noStats) {
+            counterError = response;
+          } else {
+            counterResult = response;
+          }
+          checkComplete();
+        },
+        opts,
+      });
+    }
 
     if (hasValueMetrics) {
       const { limitedOpts: _dropped, ...optsWithoutLimited } = opts;
@@ -490,34 +497,6 @@ export default class PSstatsAPI {
         opts: optsWithoutLimited,
       })
     }
-  }
-
-  _requestByCounterAndValue = (metricsMap, opts, callback) => {
-    const {
-      counterMetricsMap,
-      valueMetricsMap,
-      hasCounterMetrics,
-      hasValueMetrics,
-    } = splitMetricsByCounterAndValue(metricsMap);
-
-    if (hasCounterMetrics && hasValueMetrics) {
-      this._mergeLimitedAndStandardResults(metricsMap, opts, callback);
-      return;
-    }
-    if (hasCounterMetrics) {
-      this._retrieveDataByMetrics({
-        metricsGroups: [{ metrics: counterMetricsMap }],
-        callback,
-        opts,
-      });
-      return;
-    }
-    const { limitedOpts: _dropped, ...optsWithoutLimited } = opts;
-    this._retrieveDataByMetrics({
-      metricsGroups: [{ metrics: valueMetricsMap }],
-      callback,
-      opts: optsWithoutLimited,
-    });
   }
 
   /* PUBLICK ******************************************************************************************************* */
@@ -947,10 +926,11 @@ export default class PSstatsAPI {
     const optsWithTime = { ...opts, timePeriod: opts.timePeriod ?? this.getTimePeriod() };
 
     if (optsWithTime.limitedOpts != null) {
-      const metricsMap = metricsGroups.length === 1
-        ? transformMetricsToObj(metricsGroups[0].metrics)
-        : metricsGroups.reduce((acc, groups) => Object.assign(acc, transformMetricsToObj(groups.metrics)), {});
-      this._requestByCounterAndValue(metricsMap, optsWithTime, callback);
+      validateArgument(optsWithTime.limitedOpts, 'LIMITED_OPTS');
+      const combinedMetrics = metricsGroups.length === 1
+        ? metricsGroups[0].metrics
+        : metricsGroups.reduce((acc, { metrics: groupMetrics }) => ({ ...acc, ...groupMetrics }), {});
+      this._mergeLimitedAndStandardResults(combinedMetrics, optsWithTime, callback);
       return;
     }
 

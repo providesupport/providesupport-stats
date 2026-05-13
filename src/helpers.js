@@ -278,6 +278,25 @@ const validators = {
   STRING(arg) {
     if (!isStr(arg)) throwTypeErr(arg, STRING);
   },
+  LIMITED_OPTS(arg) {
+    if (arg === null || typeof arg !== 'object' || Array.isArray(arg)) {
+      throwTypeErr(arg, 'object with limited fields');
+    }
+    const { takeCount, skipCount, sortDirection } = arg;
+    if (takeCount !== undefined) {
+      if (!Number.isInteger(takeCount) || takeCount <= 0) {
+        throwTypeErr(takeCount, 'positive integer (takeCount)');
+      }
+    }
+    if (skipCount !== undefined) {
+      if (!Number.isInteger(skipCount) || skipCount < 0) {
+        throwTypeErr(skipCount, 'non-negative integer (skipCount)');
+      }
+    }
+    if (sortDirection !== undefined) {
+      validateArgument(sortDirection, ['asc', 'desc']);
+    }
+  },
   LEVEL(arg) {
     if (typeof arg === 'object') {
       validateLevelObj(arg);
