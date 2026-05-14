@@ -198,16 +198,10 @@ export default class PSstatsAPI {
   /* PRIVATE ******************************************************************************************************* */
 
   _standardRequest = (metrics, opts) => (callback, timePeriod, limitedOpts) => {
-    if (limitedOpts == null) {
-      return this._retrieveDataByMetrics({
-        metricsGroups: [{ metrics }],
-        callback,
-        opts: { ...opts, timePeriod },
-      });
+    if (limitedOpts != null) {
+      validateArgument(limitedOpts, 'LIMITED_OPTS');
     }
-    validateArgument(limitedOpts, 'LIMITED_OPTS');
-    const fullOpts = { ...opts, timePeriod, limitedOpts };
-    this._mergeLimitedAndStandardResults(metrics, fullOpts, callback);
+    this._mergeLimitedAndStandardResults(metrics, { ...opts, timePeriod, limitedOpts }, callback);
   };
 
   _requestWithLevel = (metrics, opts) => (level, callback, timePeriod) => this._retrieveDataByMetrics({
@@ -432,6 +426,16 @@ export default class PSstatsAPI {
         return;
       }
 
+      if (counterError && !hasValueMetrics) {
+        callback(counterError);
+        return;
+      }
+
+      if (valueError && !hasCounterMetrics) {
+        callback(valueError);
+        return;
+      }
+
       if (counterError || valueError) {
         callback({
           data: mergedResult,
@@ -446,6 +450,15 @@ export default class PSstatsAPI {
 
       callback(mergedResult);
     };
+
+    if (opts.limitedOpts == null) {
+      this._retrieveDataByMetrics({
+        metricsGroups: [{ metrics: metricsMap }],
+        callback,
+        opts,
+      });
+      return;
+    }
 
     if (hasCounterMetrics) {
       this._retrieveDataByMetrics({
@@ -924,20 +937,13 @@ export default class PSstatsAPI {
   getCustomMetrics = ({ metricsGroups, metrics, opts = {}, callback }) => {
     if (metrics) metricsGroups = [{ metrics }];
     const optsWithTime = { ...opts, timePeriod: opts.timePeriod ?? this.getTimePeriod() };
-
     if (optsWithTime.limitedOpts != null) {
       validateArgument(optsWithTime.limitedOpts, 'LIMITED_OPTS');
-      const combinedMetrics = metricsGroups.length === 1
-        ? metricsGroups[0].metrics
-        : metricsGroups.reduce((acc, { metrics: groupMetrics }) => ({ ...acc, ...groupMetrics }), {});
-      this._mergeLimitedAndStandardResults(combinedMetrics, optsWithTime, callback);
-      return;
     }
 
-    return this._retrieveDataByMetrics({
-      metricsGroups,
-      callback,
-      opts: optsWithTime,
-    });
+    const combinedMetrics = metricsGroups.length === 1
+      ? metricsGroups[0].metrics
+      : metricsGroups.reduce((acc, { metrics: groupMetrics }) => ({ ...acc, ...groupMetrics }), {});
+    this._mergeLimitedAndStandardResults(combinedMetrics, optsWithTime, callback);
   }
 }
