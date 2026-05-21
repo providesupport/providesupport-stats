@@ -205,25 +205,9 @@
     // }, TIME_PERIODS.SHORT_TIME_PERIOD10);
 
     /* getWebsiteTrafficTimeline */
-    // stats.getWebsiteTrafficTimeline(res => {
-    //   console.log(JSON.parse(JSON.stringify(res)));
-    // }, TIME_PERIODS.SHORT_TIME_PERIOD10, { takeCount: 10 });
-
-    /* TEST: getCustomMetrics + level (массив метрик) */
-    stats.getCustomMetrics({
-      metrics: [
-        { 'chat/chats-per-account': 'sent' },
-        { 'chat/chats-per-operator': 'sent' },
-        { 'chat/chats-per-department': 'sent' },
-      ],
-      opts: {
-        level: 'operators',
-        timePeriod: TIME_PERIODS.DEFAULT_TIME_PERIOD,
-      },
-      callback: res => {
-        console.log('[getCustomMetrics + level]', JSON.parse(JSON.stringify(res)));
-      },
-    });
+    stats.getWebsiteTrafficTimeline(res => {
+      console.log(JSON.parse(JSON.stringify(res)));
+    }, TIME_PERIODS.SHORT_TIME_PERIOD10, { takeCount: 10 });
   </script>
 </body>
 </html>
