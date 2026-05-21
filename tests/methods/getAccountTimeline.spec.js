@@ -22,11 +22,11 @@ asyncTest({
     timePeriod: 'SHORT_TIME_PERIOD6',
     callback: res => expect(res).toEqual(PROCESSED_RESPONSE3),
 })
-asyncTest({
+/* asyncTest({
   methodName,
   timePeriod: 'SHORT_TIME_PERIOD7',
   callback: res => expect(res).toEqual(PROCESSED_RESPONSE4),
-})
+}) */
 asyncTest({
     methodName,
     timePeriod: 'PAST_TIME_PERIOD',

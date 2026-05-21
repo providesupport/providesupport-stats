@@ -1,4 +1,4 @@
-
+// TODO: Добавить тесты по новому лиммтед хендлеру
 import 'regenerator-runtime/runtime'
 import JSONP from 'node-jsonp'
 import PSstatsAPI from '../../src/PSstatsAPI.js'
@@ -32,11 +32,18 @@ export function asyncTest({ methodName, level, timePeriod, callback }) {
         callback(res);
         resolve(res);
       }
-      stats[methodName](
-        level ? level : onCallback,
-        level ? onCallback : TIME_PERIODS[timePeriod],
-        TIME_PERIODS[timePeriod],
-      )
+      if (level) {
+        stats[methodName]({
+          level,
+          callback: onCallback,
+          timePeriod: TIME_PERIODS[timePeriod],
+        });
+      } else {
+        stats[methodName]({
+          callback: onCallback,
+          timePeriod: TIME_PERIODS[timePeriod],
+        });
+      }
     });
   }, 300000)
 }
