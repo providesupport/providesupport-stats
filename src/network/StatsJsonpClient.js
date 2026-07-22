@@ -11,12 +11,11 @@ import {
 } from '../constants/requestDefaults';
 
 export default class StatsJsonpClient {
-  constructor({ accountName, md5Password, getTimePeriod, rawResponses }) {
-    this.accountName = accountName;
-    this.md5Password = md5Password;
+  constructor({ getAccountName, getMd5Password, getTimePeriod, rawResponses }) {
+    this.getAccountName = getAccountName;
+    this.getMd5Password = getMd5Password;
     this.getTimePeriod = getTimePeriod;
     this.rawResponses = rawResponses;
-    this.makeJSONPrequest = this.makeJSONPrequest.bind(this);
   }
 
   buildURL = (metricsGroups, hash, isWebsitesStats, optTimePeriod, limitedOpts) => {
@@ -30,9 +29,9 @@ export default class StatsJsonpClient {
 
     let baseURL =
       `https://stats-${websiteHash}api.providesupport.com/api/v1/${endpoint}/providesupport/${
-        this.accountName
+        this.getAccountName()
       }?human-readable-json=false&access_token=${
-        this.md5Password}`;
+        this.getMd5Password()}`;
     let metricsInStr = transformMetricsGroupsToStr(metricsGroups);
 
     if (optTimePeriod) {

@@ -133,8 +133,8 @@ export default class PSstatsAPI {
     };
 
     this.transport = new StatsJsonpClient({
-      accountName: this.accountName,
-      md5Password: this.md5Password,
+      getAccountName: () => this.accountName,
+      getMd5Password: () => this.md5Password,
       getTimePeriod: () => this.getTimePeriod(),
       rawResponses: this.rawResponses,
     })
@@ -150,7 +150,10 @@ export default class PSstatsAPI {
       },
     })
 
-    this.metricsRouter = new MetricsRequestRouter({ metrics: this.metrics });
+    this.metricsRouter = new MetricsRequestRouter({
+      metrics: this.metrics,
+      getTimePeriod: () => this.getTimePeriod(),
+    });
 
     if (initTimePeriod) this.setTimePeriod(initTimePeriod);
   }

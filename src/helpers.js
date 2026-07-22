@@ -416,7 +416,7 @@ export function splitMetricsByCounterAndValue(metricsMap) {
   const counterMetricsMap = {};
   const valueMetricsMap = {};
   for (const [key, targetName] of Object.entries(metricsMap)) {
-    const name = targetName && typeof targetName === 'string' ? targetName : key;
+    const name = typeof targetName === 'string' ? targetName : undefined;
     if (isCounterMetric(key)) {
       counterMetricsMap[key] = name;
     } else {
