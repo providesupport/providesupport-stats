@@ -159,10 +159,10 @@
 
     // stats.getOperatorsAwayTime(res => console.log(JSON.stringify(res, undefined, 2)), TIME_PERIODS.DEFAULT_TIME_PERIOD);
 
-    // stats.getControlPanelLoginCount(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getControlPanelLoginCount({ callback: res => console.log(JSON.stringify(res, undefined, 2)) });
     // stats.getChatsSummary(['account'], res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD)
     // stats.getPreChatSurveySummary(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
-    // stats.getChatReferrersTimeline(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
+    // stats.getChatReferrersTimeline({ callback: res => console.log(JSON.stringify(res, undefined, 2)) });
     // stats.getWebsiteTrafficSummary(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
     // stats.getWebsiteTrafficTimeline(res => console.log(res), TIME_PERIODS.DEFAULT_TIME_PERIOD);
 
@@ -200,14 +200,9 @@
 
 
     /* limitedRequest */
-    // stats.getLimitedVisitorsByReferrer({takeCount: 10})(res => {
-    //   console.log(JSON.parse(JSON.stringify(res)));
-    // }, TIME_PERIODS.SHORT_TIME_PERIOD10);
-
-    /* getWebsiteTrafficTimeline */
-    stats.getWebsiteTrafficTimeline(res => {
+    stats.getWebsiteTrafficTimeline({ callback: res => {
       console.log(JSON.parse(JSON.stringify(res)));
-    }, TIME_PERIODS.SHORT_TIME_PERIOD10, { takeCount: 10 });
+    }, timePeriod: TIME_PERIODS.SHORT_TIME_PERIOD10, limitedOpts: { takeCount: 10 } });
   </script>
 </body>
 </html>
