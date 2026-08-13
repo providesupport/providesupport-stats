@@ -48,10 +48,12 @@ export default class MetricsRequestRouter {
 
   customMetricsRequest = ({ metricsGroups, metrics, opts = {}, callback }) => {
     if (metrics) metricsGroups = [{ metrics }];
-    const optsWithTime = { ...opts, timePeriod: opts.timePeriod ?? this.getTimePeriod() };
-    if (optsWithTime.limitedOpts != null) {
-      validateArgument(optsWithTime.limitedOpts, 'LIMITED_OPTS');
+
+    if (opts.limitedOpts != null) {
+      throw new TypeError('Limited options are not supported for custom metrics request');
     }
+
+    const optsWithTime = { ...opts, timePeriod: opts.timePeriod ?? this.getTimePeriod() };
 
     this.routeMetricsRequest({
       metricsGroups,

@@ -436,7 +436,7 @@ export default class PSstatsAPI {
     [CHAT_PCS_CASE_NOT_SOLVED_COUNT_PER_ACCOUNT]: 'postChatSurvey-caseNotSolved',
     [CHAT_PCS_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-contented',
     [CHAT_PCS_NOT_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-notContented',
-  }, { customParser: parseAccountTimelineData, isShouldAddTotals: true })
+  }, { customParser: parseAccountTimelineData })
 
   getOperatorsSummary = this._standardRequest({
     [CHAT_CHATS_PER_OPERATOR]: 'chatsSent',
@@ -504,7 +504,6 @@ export default class PSstatsAPI {
         type: OP_NAME,
       },
     ],
-    isShouldAddTotals: true,
   })
 
   getDepartmentsSummary = this._standardRequest({
@@ -553,7 +552,6 @@ export default class PSstatsAPI {
         type: OFFLINE_TIME_BY_PERIODS,
       },
     ],
-    isShouldAddTotals: true,
   })
 
   getChatReferrersSummary = this._standardRequest({
@@ -564,7 +562,7 @@ export default class PSstatsAPI {
   getChatReferrersTimeline = this._standardRequest({
     [CHAT_START_CHAT_FORM_OPEN_COUNT_BY_URL]: 'preChatSurveyReferrers',
     [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL]: 'offlineFormReferrers',
-  }, { isShouldAddTotals: true, isShouldAddMetricTotals: true })
+  })
 
   /* isWebsitesStats */
   getWebsiteTrafficSummary = this._standardRequest({
@@ -577,7 +575,7 @@ export default class PSstatsAPI {
     [WEBSITE_HITS_BY_URL]: 'visitsByURL',
     [WEBSITE_HITS_PER_VISITOR]: 'totalHits',
     [WEBSITE_VISITORS_BY_REFERRER_URL]: 'visitsByReferrer',
-  }, { isWebsitesStats: true, isShouldAddTotals: true })
+  }, { isWebsitesStats: true })
 
   getVisitsByURL = this._standardRequest(WEBSITE_HITS_BY_URL, { isWebsitesStats: true })
 

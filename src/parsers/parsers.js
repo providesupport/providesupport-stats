@@ -85,7 +85,6 @@ function parseWithOneOfBasicParsers({
   statsPeriods,
   opts,
 }) {
-  const { isShouldAddTotals, isShouldAddMetricTotals } = opts
   let parsedMetrics = {}
   for (const metricName in metrics) {
     const metric = metrics[metricName]
@@ -94,37 +93,35 @@ function parseWithOneOfBasicParsers({
     if (metric[COUNTER_OR_VALUE] === 'counter') {
       if (metric[MULTIPLE]) {
         parsedMetrics[metricNameInResponse]
-          = parseMultipleCountersMetric(metric, statsPeriods, isShouldAddTotals, isShouldAddMetricTotals);
+          = parseMultipleCountersMetric(metric, statsPeriods);
       } else {
-        parsedMetrics[metricNameInResponse] = parseCounterMetric(metric[METRICS][0], statsPeriods, isShouldAddTotals);
+        parsedMetrics[metricNameInResponse] = parseCounterMetric(metric[METRICS][0], statsPeriods);
       }
     } else {
       if (metric[MULTIPLE]) {
         parsedMetrics[metricNameInResponse] =
-          parseMultipleStructuresMetric(metric, statsPeriods, opts, isShouldAddTotals, isShouldAddMetricTotals);
+          parseMultipleStructuresMetric(metric, statsPeriods, opts);
       } else {
         parsedMetrics[metricNameInResponse] =
-          parseStructureMetric(metric[METRICS][0], statsPeriods, opts, isShouldAddTotals);
+          parseStructureMetric(metric[METRICS][0], statsPeriods, opts);
       }
     }
   }
   return parsedMetrics
 }
 
-export function parseMultipleCountersMetric(metric, statsPeriods, isShouldAddTotals, isShouldAddMetricTotals) {
+export function parseMultipleCountersMetric(metric, statsPeriods) {
   let parsedMetric = {};
   let metricItems = metric[METRICS];
   metricItems.forEach(metricItem => {
     const metricItemName = metricItem[METRIC_TAG];
-    parsedMetric[metricItemName] = parseCounterMetric(metricItem, statsPeriods, isShouldAddTotals)
-    if (isShouldAddMetricTotals) {
-      parsedMetric['~total'] = (parsedMetric['~total'] || 0) + parsedMetric[metricItemName].total
-    }
+    parsedMetric[metricItemName] = parseCounterMetric(metricItem, statsPeriods)
+    // parsedMetric['~total'] = (parsedMetric['~total'] || 0) + parsedMetric[metricItemName].total
   })
   return parsedMetric;
 }
 
-export function parseCounterMetric(metric, statsPeriods, isShouldAddTotals) {
+export function parseCounterMetric(metric, statsPeriods) {
   if (!metric) return undefined
 
   let parsedMetric = [];
@@ -136,52 +133,42 @@ export function parseCounterMetric(metric, statsPeriods, isShouldAddTotals) {
     });
   })
 
-  if (isShouldAddTotals) {
-    return {
-      total: metric[TOTAL],
-      timeline: parsedMetric,
-    }
+  return {
+    total: metric[TOTAL],
+    timeline: parsedMetric,
   }
-  return parsedMetric;
 }
 
-export function parseMultipleStructuresMetric(metric, statsPeriods, opts, isShouldAddTotals, isShouldAddMetricTotals) {
+export function parseMultipleStructuresMetric(metric, statsPeriods, opts) {
   let parsedMetric = {};
   metric[METRICS].forEach(metricItem => {
     let metricItemName = metricItem[METRIC_TAG];
-    parsedMetric[metricItemName] = parseStructureMetric(metricItem, statsPeriods, opts, isShouldAddTotals);
-    if (isShouldAddMetricTotals) {
-      if (!parsedMetric['~total']) {
-        parsedMetric['~total'] = {
-          average: metricItem.totals[AVERAGE],
-          total: metricItem.totals[VALUES_SUM],
-        }
-      }
-      if (parsedMetric[metricItemName].total) {
-        parsedMetric['~total'].average += parsedMetric[metricItemName].total.average;
-        parsedMetric['~total'].total += parsedMetric[metricItemName].total.total;
-      }
-    }
+    parsedMetric[metricItemName] = parseStructureMetric(metricItem, statsPeriods, opts);
+    // if (!parsedMetric['~total']) {
+    //   parsedMetric['~total'] = {
+    //     average: metricItem.totals[AVERAGE],
+    //     total: metricItem.totals[VALUES_SUM],
+    //   }
+    // }
+    // if (parsedMetric[metricItemName].total) {
+    //   parsedMetric['~total'].average += parsedMetric[metricItemName].total.average;
+    //   parsedMetric['~total'].total += parsedMetric[metricItemName].total.total;
+    // }
   })
   return parsedMetric;
 }
 
-function parseStructureMetric(metricItem, statsPeriods, opts, isShouldAddTotals) {
+function parseStructureMetric(metricItem, statsPeriods, opts) {
   if (!metricItem) return undefined
-  let parsedMetric;
-  if (isShouldAddTotals) {
-    parsedMetric = {
-      total: metricItem[TOTAL] !== undefined
-        ? metricItem[TOTAL]
-        : {
-          average: metricItem.totals[AVERAGE],
-          total: metricItem.totals[VALUES_SUM],
-        },
-      timeline: [],
-    };
-  } else {
-    parsedMetric = [];
-  }
+  let parsedMetric = {
+    total: metricItem[TOTAL] !== undefined
+      ? metricItem[TOTAL]
+      : {
+        average: metricItem.totals[AVERAGE],
+        total: metricItem.totals[VALUES_SUM],
+      },
+    timeline: [],
+  };
 
   metricItem[VALUES].forEach(value => {
     let timePeriod = getStatsPeriodById(statsPeriods, value[STATS_PERIOD_ID])
@@ -200,11 +187,7 @@ function parseStructureMetric(metricItem, statsPeriods, opts, isShouldAddTotals)
           total: value[VALUES_SUM],
         };
     }
-    if (isShouldAddTotals) {
-      parsedMetric['timeline'].push(statsItem);
-    } else {
-      parsedMetric.push(statsItem);
-    }
+    parsedMetric['timeline'].push(statsItem);
   })
   return parsedMetric;
 }
@@ -605,8 +588,7 @@ export function parseOfflineTime({ metrics, statsPeriods, opts }) {
 }
 
 export function parseSummaryAllItems({ metrics, statsPeriods, opts }) {
-  const metricsAfterBaseParse =
-    parseWithOneOfBasicParsers({ metrics, statsPeriods, opts: { ...opts, isShouldAddTotals: true } })
+  const metricsAfterBaseParse = parseWithOneOfBasicParsers({ metrics, statsPeriods, opts })
   let parsedData = {};
   for (const metricName in metricsAfterBaseParse) {
     const metric = metricsAfterBaseParse[metricName];
