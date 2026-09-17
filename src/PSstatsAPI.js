@@ -363,10 +363,22 @@ export default class PSstatsAPI {
     [CHAT_PRE_CHAT_SURVEY_CLICK_TROUGH_RATE]: 'clickThroughRate',
   }, { customParser: parseSummaryData })
 
+  getPreChatSurveySummaryNoReferrers = this._standardRequest({
+    [CHAT_START_CHAT_FORM_OPEN_COUNT]: 'loads',
+    [CHAT_START_CHAT_FORM_SUBMIT_COUNT]: 'submits',
+    [CHAT_PRE_CHAT_SURVEY_CLICK_TROUGH_RATE]: 'clickThroughRate',
+  }, { customParser: parseSummaryData })
+
   getOfflineFormSummary = this._standardRequest({
     [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT]: 'loads',
     [CHAT_OFFLINE_MESSAGE_COUNT]: 'submits',
     [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL]: 'referrers',
+    [CHAT_OFFLINE_FORM_CLICK_TROUGH_RATE]: 'clickThroughRate',
+  }, { customParser: parseSummaryData })
+
+  getOfflineFormSummaryNoReferrers = this._standardRequest({
+    [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT]: 'loads',
+    [CHAT_OFFLINE_MESSAGE_COUNT]: 'submits',
     [CHAT_OFFLINE_FORM_CLICK_TROUGH_RATE]: 'clickThroughRate',
   }, { customParser: parseSummaryData })
 
@@ -387,6 +399,39 @@ export default class PSstatsAPI {
     [CHAT_OFFLINE_MESSAGE_COUNT]: 'offlineForm-submits',
     [CHAT_OFFLINE_FORM_CLICK_TROUGH_RATE]: 'offlineForm-clickThroughRate',
     [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT_BY_URL]: 'offlineForm-referrers',
+    [CHAT_CHATS_PER_ACCOUNT]: 'chats-sent',
+    [CHAT_ACCEPTED_CHATS_PER_ACCOUNT]: 'chats-accepted',
+    [CHAT_ACCEPTANCE_RATE]: 'chats-acceptanceRate',
+    [CHAT_MISSED_CALLS_PER_ACCOUNT]: 'chats-missed',
+    [CHAT_INVITATION_SENT_COUNT_PER_ACCOUNT]: 'proactiveChats-sent',
+    [CHAT_INVITATION_ACCEPT_COUNT_PER_ACCOUNT]: 'proactiveChats-accepted',
+    [CHAT_PROACTIVE_ACCEPTANCE_RATE]: 'proactiveChats-acceptanceRate',
+    [CHAT_INVITATION_DECLINE_COUNT_PER_ACCOUNT]: 'proactiveChats-declined',
+    [CHAT_PCS_PROFICIENCY_PER_ACCOUNT]: 'postChatSurvey-proficiency',
+    [CHAT_PCS_POLITENESS_PER_ACCOUNT]: 'postChatSurvey-politeness',
+    [CHAT_PCS_CASE_SOLVED_COUNT_PER_ACCOUNT]: 'postChatSurvey-caseSolved',
+    [CHAT_PCS_CASE_NOT_SOLVED_COUNT_PER_ACCOUNT]: 'postChatSurvey-caseNotSolved',
+    [CHAT_PCS_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-contented',
+    [CHAT_PCS_NOT_CONTENTED_COUNT_PER_ACCOUNT]: 'postChatSurvey-notContented',
+  }, {
+    customParser: parseAccountSummaryData,
+  })
+  
+  getAccountSummaryNoReferrers = this._standardRequest({
+    [CHAT_ONLINE_TIME_PER_ACCOUNT]: 'onlinePresence-chatOnlineTime',
+    [CHAT_ACCEPT_CHAT_DELAY_PER_ACCOUNT]: 'averages-chatAcceptTime',
+    [CHAT_START_CHAT_FORM_FILLOUT_TIME]: 'averages-preChatSurveyFilloutTime',
+    [CHAT_LEAVE_MESSAGE_FORM_FILLOUT_TIME]: 'averages-offlineFormFilloutTime',
+    [CHAT_VISITOR_MESSAGES_COUNT_PER_CHAT]: 'averages-visitorMessagesPerChat',
+    [CHAT_ALL_OPERATORS_MESSAGES_COUNT_PER_CHAT]: 'averages-operatorMessagesPerChat',
+    [CHAT_OPERATOR_RESPONSE_TIME_PER_ACCOUNT]: 'averages-operatorResponseTime',
+    [CHAT_VISITOR_RESPONSE_TIME]: 'averages-visitorResponseTime',
+    [CHAT_START_CHAT_FORM_OPEN_COUNT]: 'preChatSurvey-loads',
+    [CHAT_START_CHAT_FORM_SUBMIT_COUNT]: 'preChatSurvey-submits',
+    [CHAT_PRE_CHAT_SURVEY_CLICK_TROUGH_RATE]: 'preChatSurvey-clickThroughRate',
+    [CHAT_LEAVE_MESSAGE_FORM_OPEN_COUNT]: 'offlineForm-loads',
+    [CHAT_OFFLINE_MESSAGE_COUNT]: 'offlineForm-submits',
+    [CHAT_OFFLINE_FORM_CLICK_TROUGH_RATE]: 'offlineForm-clickThroughRate',
     [CHAT_CHATS_PER_ACCOUNT]: 'chats-sent',
     [CHAT_ACCEPTED_CHATS_PER_ACCOUNT]: 'chats-accepted',
     [CHAT_ACCEPTANCE_RATE]: 'chats-acceptanceRate',

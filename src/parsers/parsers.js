@@ -310,11 +310,13 @@ export function parseAccountSummaryData({ metrics, statsPeriods, opts }) {
   handleSummaryValue(parsedData, 'averages-visitorMessagesPerChat', 'average');
   handleSummaryValue(parsedData, 'averages-operatorResponseTime', 'average', true);
   handleSummaryValue(parsedData, 'averages-visitorResponseTime', 'average', true);
+  handleSummaryValue(parsedData, 'averages-durationPerAccount', 'average', true);
+  handleSummaryValue(parsedData, 'averages-messageCountPerChatPerAccount', 'average');
   if (parsedData['chats-sent'] === NO_STATS_METRIC_MSG) {
     parsedData['averages-incomingChatsPerDay'] = NOT_ENOUGH_STATS_MSG;
   } else {
     parsedData['averages-incomingChatsPerDay'] = parsedData['chats-sent'] / totalTimeInDays;
-  }
+  } 
   if (parsedData['chats-sent'] === NO_STATS_METRIC_MSG) {
     parsedData['averages-incomingChatsPerHour'] = NOT_ENOUGH_STATS_MSG;
   } else {
@@ -391,7 +393,8 @@ export function parseAccountTimelineData({ metrics, statsPeriods, opts }) {
   handleSummaryValueByPeriods(parsedMetrics['averages-visitorMessagesPerChat'], 'average');
   handleSummaryValueByPeriods(parsedMetrics['averages-operatorResponseTime'], 'average', true);
   handleSummaryValueByPeriods(parsedMetrics['averages-visitorResponseTime'], 'average', true);
-
+  handleSummaryValueByPeriods(parsedMetrics['averages-durationPerAccount'], 'average', true);
+  handleSummaryValueByPeriods(parsedMetrics['averages-messageCountPerChatPerAccount'], 'average');
   for (let prop in parsedMetrics) {
     let sections = prop.split('-');
     if (!parsedMetrics[sections[0]]) parsedMetrics[sections[0]] = {};
