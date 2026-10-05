@@ -96,12 +96,34 @@ For example, if you need statistics for each day from September 1 till September
     endDate: "20 Sep 2022",
     duration: 'day'
 }
-```  
+```
 
+* **limitedOpts** (optional) pages the URL list returned by counter metrics.
+Other metrics are returned in full. If it is not passed, the full URL list is also returned in full.
+It is an object with 3 properties:
+    * __takeCount__ - how many URLs to return. Must be a positive integer. If not specified, ```10``` is used.
+    * __skipCount__ - how many URLs to skip before this page. Must be an integer of ```0``` or more. If not specified, ```0``` is used.
+    * __sortDirection__ - one of the values: ```'asc'``` or ```'desc'```. If not specified, ```'desc'``` is used.
+
+If ```{}``` is being passed as limitedOpts, default values will be used.
+
+Example to get 10 first referrer URLs:
+
+```
+getPreChatSurveyReferrers({
+    callback: function(data) {},
+    limitedOpts: {
+        takeCount: 10,
+        skipCount: 0,
+        sortDirection: 'desc'
+    }
+})
+```
+In a response, only the URL fields are paged: referrers, visitsByURL and visitsByReferrer. Other statistics in that pool are returned in full.
 
 ## Methods:  
 
-**getAccountSummary(callback, \[timePeriod\])** - account statistics overview  for the specified timePeriod
+**getAccountSummary({ callback, \[timePeriod\], \[limitedOpts\] })** - account statistics overview  for the specified timePeriod
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -185,7 +207,81 @@ For example, if you need statistics for each day from September 1 till September
   ```
 </details>
 
-**getOperatorsSummary(callback, \[timePeriod\])** - operators' statistics overview    
+**getAccountSummaryNoReferrers({ callback, \[timePeriod\] })** - account statistics overview for the specified timePeriod, without referrers
+<details>
+  <summary>Example of callback response data:</summary>
+
+  ```
+  {
+  "offlineForm": {
+    "loads": 335,
+    "submits": 19,
+    "clickThroughRate": "6%"
+  },
+  "chats": {
+    "sent": 23970,
+    "missed": 5334,
+    "accepted": 14744,
+    "acceptanceRate": "62%"
+  },
+  "averages": {
+    "chatAcceptTime": [
+      19.9,
+      "19s"
+    ],
+    "operatorMessagesPerChat": 4.1,
+    "preChatSurveyFilloutTime": [
+      65.8,
+      "1m 5s"
+    ],
+    "offlineFormFilloutTime": [
+      43.1,
+      "43s"
+    ],
+    "visitorMessagesPerChat": 4.9,
+    "chatsPerDay": 52.6,
+    "chatsPerHour": 2.2
+  },
+  "preChatSurvey": {
+    "loads": 184808,
+    "submits": 24068,
+    "clickThroughRate": "13%"
+  },
+  "onlinePresence": {
+    "chatOnlineTime": [
+      32832126,
+      "1y 15d 2m 6s"
+    ],
+    "chatOfflineTime": [
+      6566273,
+      "2m 15d 23h 57m 53s"
+    ]
+  },
+  "proactiveChats": {
+    "sent": 6,
+    "declined": 3,
+    "accepted": 2,
+    "acceptanceRate": "33%"
+  },
+  "postChatSurvey": {
+    "politeness": {
+      "average": 4.6,
+      "total": 9726
+    },
+    "proficiency": {
+      "average": 4.6,
+      "total": 9600
+    },
+    "caseSolved": "No statistics for this metric!",
+    "caseNotSolved": "No statistics for this metric!",
+    "contented": "No statistics for this metric!",
+    "notContented": "No statistics for this metric!"
+  }
+}
+  ```
+</details>
+
+**getOperatorsSummary({ callback, \[timePeriod\] })** - operators' statistics overview    
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -237,7 +333,7 @@ For example, if you need statistics for each day from September 1 till September
 </details>
 
 
-**getDepartmentsSummary(callback, \[timePeriod\])** - departments' statistics overview    
+**getDepartmentsSummary({ callback, \[timePeriod\] })** - departments' statistics overview    
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -308,7 +404,7 @@ __Note!__ Department named __"~"__ is used to collect data in case deprtment sel
 the pre-chat survey or department wasn't selected.
 
 
-**getProactiveChatsSummary(level, callback, \[timePeriod\])** - proactive chats overview   
+**getProactiveChatsSummary({ level, callback, \[timePeriod\] })** - proactive chats overview   
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -361,7 +457,7 @@ the pre-chat survey or department wasn't selected.
 
 </details>
 
-**getChatsSummary(level, callback, \[timePeriod\])** - incoming chat calls overview  
+**getChatsSummary({ level, callback, \[timePeriod\] })** - incoming chat calls overview  
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -419,7 +515,7 @@ the pre-chat survey or department wasn't selected.
   ```
 </details>
 
-**getPreChatSurveySummary(callback, \[timePeriod\])** - pre-chat survey usage overview 
+**getPreChatSurveySummary({ callback, \[timePeriod\], \[limitedOpts\] })** - pre-chat survey usage overview 
 <details> 
   <summary>Example of callback response data:</summary>
 
@@ -436,7 +532,20 @@ the pre-chat survey or department wasn't selected.
   ```
 </details>
 
-**getWebsiteTrafficSummary(callback, \[timePeriod\])** - website traffic overview
+**getPreChatSurveySummaryNoReferrers({ callback, \[timePeriod\] })** - pre-chat survey usage overview, without referrers
+<details>
+  <summary>Example of callback response data:</summary>
+
+  ```
+{
+    "loads": 25,
+    "submits": 15,
+    "clickThroughRate": "60%"
+}
+  ```
+</details>
+
+**getWebsiteTrafficSummary({ callback, \[timePeriod\], \[limitedOpts\] })** - website traffic overview
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -460,7 +569,7 @@ the pre-chat survey or department wasn't selected.
   ```
 </details>
 
-**getChatReferrersSummary(callback, \[timePeriod\])** - chat referrers overview
+**getChatReferrersSummary({ callback, \[timePeriod\], \[limitedOpts\] })** - chat referrers overview
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -481,7 +590,7 @@ the pre-chat survey or department wasn't selected.
   ```
 </details>
 
-**getOfflineFormSummary(callback, \[timePeriod\])** - offline form usage overview
+**getOfflineFormSummary({ callback, \[timePeriod\], \[limitedOpts\] })** - offline form usage overview
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -498,7 +607,20 @@ the pre-chat survey or department wasn't selected.
   ```
 </details>
 
-**getPostChatSurveySummary(level, callback, \[timePeriod\])** - post chat survey results overview
+**getOfflineFormSummaryNoReferrers({ callback, \[timePeriod\] })** - offline form usage overview, without referrers
+<details>
+  <summary>Example of callback response data:</summary>
+
+  ```
+{
+    "loads": 18,
+    "submits": 2,
+    "clickThroughRate": "11%"
+}
+  ```
+</details>
+
+**getPostChatSurveySummary({ level, callback, \[timePeriod\] })** - post chat survey results overview
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -578,7 +700,7 @@ the pre-chat survey or department wasn't selected.
 ```
 </details>
 
-**getAccountTimeline(callback, \[timePeriod\])** - account statistics by specified timeperiods (handy for graphs)
+**getAccountTimeline({ callback, \[timePeriod\], \[limitedOpts\] })** - account statistics by specified timeperiods (handy for graphs)
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -1027,7 +1149,7 @@ the pre-chat survey or department wasn't selected.
 ```
 </details>
 
-**getOperatorsTimeline(callback, \[timePeriod\])** - operators statistics by timeperiods (handy for graphs)
+**getOperatorsTimeline({ callback, \[timePeriod\] })** - operators statistics by timeperiods (handy for graphs)
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -1251,7 +1373,7 @@ the pre-chat survey or department wasn't selected.
 ```
 </details>
 
-**getDepartmentsTimeline(callback, \[timePeriod\])** - departments statistics by timeperiods (handy for graphs)
+**getDepartmentsTimeline({ callback, \[timePeriod\] })** - departments statistics by timeperiods (handy for graphs)
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -1740,14 +1862,13 @@ the pre-chat survey or department wasn't selected.
 __Note!__ Department named __"~"__ is used to collect data in case deprtment selection is not available on 
 the pre-chat survey or department wasn't selected.
 
-**getChatReferrersTimeline(callback, \[timePeriod\])** - chat referrers statistics by timeperiods (handy for graphs)
+**getChatReferrersTimeline({ callback, \[timePeriod\], \[limitedOpts\] })** - chat referrers statistics by timeperiods (handy for graphs)
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
     "preChatSurveyReferrers": {
-        "~total": 138,
         "https://www.mywebsite.com/": {
             "total": 31,
             "timeline": [
@@ -1784,7 +1905,6 @@ the pre-chat survey or department wasn't selected.
 		...
     },
     "offlineFormReferrers": {
-        "~total": 12,
         "https://www.mywebsite.com/": {
             "total": 9,
             "timeline": [
@@ -1818,7 +1938,7 @@ the pre-chat survey or department wasn't selected.
 ```
 </details>
 
-**getWebsiteTrafficTimeline(callback, \[timePeriod\])** - website traffic statistics by timeperiods (handy for graphs)
+**getWebsiteTrafficTimeline({ callback, \[timePeriod\], \[limitedOpts\] })** - website traffic statistics by timeperiods (handy for graphs)
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -1919,289 +2039,327 @@ the pre-chat survey or department wasn't selected.
 ```
 </details>
 
-**getControlPanelLoginCount(callback, \[timePeriod\])**  
+**getControlPanelLoginCount({ callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
-```
-[
-    {
-        "31-Aug-2022 21:00:00 - 30-Sep-2022 21:00:00": 24
-    },
-    {
-        "30-Sep-2022 21:00:00 - 31-Oct-2022 22:00:00": 11
-    }
-]
-```  
-
-</details>
-
-**getWebAgentAppLoginCount(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
+``` 
 {
-    "Jane\njane": [
-		{
-			"31-Aug-2022 21:00:00 - 30-Sep-2022 21:00:00": 24
-		},
-		{
-			"30-Sep-2022 21:00:00 - 31-Oct-2022 22:00:00": 11
-		}	
-    ],
-    "Denise Rogers\noperator1": [
-		{
-			"31-Aug-2022 21:00:00 - 30-Sep-2022 21:00:00": 44
-		},
-		{
-			"30-Sep-2022 21:00:00 - 31-Oct-2022 22:00:00": 20
-		}
-    ],
-	...
+    "total": 35,
+    "timeline": [
+        { "31-Aug-2022 21:00:00 - 30-Sep-2022 21:00:00": 24 },
+        { "30-Sep-2022 21:00:00 - 31-Oct-2022 22:00:00": 11 }
+    ]
 }
 ```  
 
 </details>
 
-**getPreChatSurveyLoadCount(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 2472
-    },
-    {
-        "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 2767
-    },
-    ...
-]
-```  
-
-</details>
-
-**getOfflineFormLoadCount(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 10
-    },
-    {
-        "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 18
-    },
-    ...
-]
-```  
-
-</details>
-
-**getPreChatSurveyReferrers(callback, \[timePeriod\])**  
+**getWebAgentAppLoginCount({ callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "https://www.mywebsite.com/": [
+    "Jane\njane": {
+        "total": 35,
+        "timeline": [
+            {
+                "31-Aug-2022 21:00:00 - 30-Sep-2022 21:00:00": 24
+            },
+            {
+                "30-Sep-2022 21:00:00 - 31-Oct-2022 22:00:00": 11
+            }
+        ]
+    },
+    "Denise Rogers\noperator1": {
+        "total": 64,
+        "timeline": [
+            {
+                "31-Aug-2022 21:00:00 - 30-Sep-2022 21:00:00": 44
+            },
+            {
+                "30-Sep-2022 21:00:00 - 31-Oct-2022 22:00:00": 20
+            }
+        ]
+    },
+    ...
+}
+```  
+
+</details>
+
+**getPreChatSurveyLoadCount({ callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "total": 5239,
+    "timeline": [
         {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 491
+            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 2472
         },
         {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 471
-        }
-    ],
-    "https://www.mywebsite.com/prices": [
+            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 2767
+        },
+        ...
+    ]
+}
+```  
+
+</details>
+
+**getOfflineFormLoadCount({ callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "total": 28,
+    "timeline": [
         {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 77
+            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 10
         },
         {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 93
-        }
-    ],
-    "https://www.mywebsite.com/signup": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 96
+            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 18
         },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 91
-        }
-    ],
-	...
+        ...
+    ]
+}
+```  
+
+</details>
+
+**getPreChatSurveyReferrers({ callback, \[timePeriod\], \[limitedOpts\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "https://www.mywebsite.com/": {
+        "total": 962,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 491
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 471
+            }
+        ]
+    },
+    "https://www.mywebsite.com/prices": {
+        "total": 170,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 77
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 93
+            }
+        ]
+    },
+    "https://www.mywebsite.com/signup": {
+        "total": 187,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 96
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 91
+            }
+        ]
+    },
+    ...
 }
 ```  
 
 </details>   
 
-**getOfflineFormReferrers(callback, \[timePeriod\])**  
+**getOfflineFormReferrers({ callback, \[timePeriod\], \[limitedOpts\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "https://www.mywebsite.com/": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 5
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
-        }
-    ],
-    "https://www.mywebsite.com/prices": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 2
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 3
-        }
-    ],
-    "https://www.mywebsite.com/signup": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 3
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 1
-        }
-    ],
-	...
+    "https://www.mywebsite.com/": {
+        "total": 9,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 5
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
+            }
+        ]
+    },
+    "https://www.mywebsite.com/prices": {
+        "total": 5,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 2
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 3
+            }
+        ]
+    },
+    "https://www.mywebsite.com/signup": {
+        "total": 4,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 3
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 1
+            }
+        ]
+    },
+    ...
 }
 ```  
 
 </details>  
 
-**getPreChatSurveySubmitCount(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 835
-    },
-    {
-        "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 794
-    }
-]
-```  
-
-</details>
-
-
-**getOfflineMessageSubmitCount(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 12
-    },
-    {
-        "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 9
-    }
-]
-```  
-
-</details>
-
-**getPreChatSurveyFilloutTime(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": {
-            "average": [
-                66.98354,
-                "1m 6s"
-            ],
-            "total": [
-                55395.39,
-                "15h 23m 15s"
-            ]
-        }
-    },
-    {
-        "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": {
-            "average": [
-                73.62398,
-                "1m 13s"
-            ],
-            "total": [
-                57426.7,
-                "15h 57m 6s"
-            ]
-        }
-    },
-    ...
-]
-```  
-
-</details>
-
-**getOfflineFormFilloutTime(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": {
-            "average": [
-                257.85,
-                "4m 17s"
-            ],
-            "total": [
-                515.7,
-                "8m 35s"
-            ]
-        }
-    },
-    ...
-]
-```  
-
-</details>
-
-**getReceivedChatsCount(level, callback, \[timePeriod\])**  
+**getPreChatSurveySubmitCount({ callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "account": [
+    "total": 1629,
+    "timeline": [
         {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 828
+            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 835
         },
         {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 779
+            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 794
         }
     ]
+}
+```  
+
+</details>
+
+
+**getOfflineMessageSubmitCount({ callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "total": 21,
+    "timeline": [
+        {
+            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 12
+        },
+        {
+            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 9
+        }
+    ]
+}
+```  
+
+</details>
+
+**getPreChatSurveyFilloutTime({ callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "total": {
+        "average": [66.98354, "1m 6s"],
+        "total": [55395.39, "15h 23m 15s"]
+    },
+    "timeline": [
+        {
+            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": {
+                "average": [66.98354, "1m 6s"],
+                "total": [55395.39, "15h 23m 15s"]
+            }
+        },
+        {
+            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": {
+                "average": [73.62398, "1m 13s"],
+                "total": [57426.7, "15h 57m 6s"]
+            }
+        },
+        ...
+    ]
+}
+```  
+
+</details>
+
+**getOfflineFormFilloutTime({ callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "total": {
+        "average": [257.85, "4m 17s"],
+        "total": [515.7, "8m 35s"]
+    },
+    "timeline": [
+        {
+            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": {
+                "average": [257.85, "4m 17s"],
+                "total": [515.7, "8m 35s"]
+            }
+        },
+        ...
+    ]
+}
+```  
+
+</details>
+
+**getReceivedChatsCount({ level, callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "account": {
+        "total": 1607,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 828
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 779
+            }
+        ]
+    }
 }
 ```  
 ```
 {
     "departments": {
-        "~": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 428
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 370
-            }
-        ],
-        "Technical Support": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 237
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 267
-            }
-        ],
+        "~": {
+            "total": 798,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 428
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 370
+                }
+            ]
+        },
+        "Technical Support": {
+            "total": 504,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 237
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 267
+                }
+            ]
+        },
         ...
     }
 }
@@ -2209,22 +2367,28 @@ the pre-chat survey or department wasn't selected.
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 151
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 128
-            }
-        ],
-        "Denise Rogers\noperator1": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 96
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 99
-            }
-        ],
+        "Jane\njane": {
+            "total": 279,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 151
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 128
+                }
+            ]
+        },
+        "Denise Rogers\noperator1": {
+            "total": 195,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 96
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 99
+                }
+            ]
+        },
         ...
     }
 }
@@ -2232,41 +2396,50 @@ the pre-chat survey or department wasn't selected.
 
 </details>  
 
-**getAcceptedChatsCount(level, callback, \[timePeriod\])**  
+**getAcceptedChatsCount({ level, callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "account": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 567
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 541
-        }
-    ]
+    "account": {
+        "total": 1108,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 567
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 541
+            }
+        ]
+    }
 }
 ```
 ```
 {
     "departments": {
-        "~": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 379
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 355
-            }
-        ],
-        "Technical Support": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 205
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 247
-            }
-        ],
+        "~": {
+            "total": 734,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 379
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 355
+                }
+            ]
+        },
+        "Technical Support": {
+            "total": 452,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 205
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 247
+                }
+            ]
+        },
         ...
     }
 }
@@ -2274,289 +2447,358 @@ the pre-chat survey or department wasn't selected.
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 128
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 105
-            }
-        ],
-        "Denise Rogers\noperator1": [
+        "Jane\njane": {
+            "total": 233,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 128
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 105
+                }
+            ]
+        },
+        "Denise Rogers\noperator1": {
+            "total": 73,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 31
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 42
+                }
+            ]
+        },
+        ...
+    }
+}
+```  
+
+</details>  
+
+**getAcceptedProactiveChatsCount({ level, callback, \[timePeriod\] })** - overview of proactive chats statistics
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "account": {
+        "total": 73,
+        "timeline": [
             {
                 "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 31
             },
             {
                 "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 42
-            }
-        ],
-        ...
+            },
+            ...
+        ]
     }
-}
-```  
-
-</details>  
-
-**getAcceptedProactiveChatsCount(level, callback, \[timePeriod\])** - overview of proactive chats statistics
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-{
-    "account": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 31
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 42
-        }
-        ...
-    ]
 }
 ```
 ```
 {
     "departments": {
-        "Sales": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 9
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 12
-            }
-        ],
-        "Technical Support": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 4
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 7
-            }
-        ],
-       ...
+        "Sales": {
+            "total": 21,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 9
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 12
+                }
+            ]
+        },
+        "Technical Support": {
+            "total": 11,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 4
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 7
+                }
+            ]
+        },
+        ...
     }
 }
 ```
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 7
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 6
-            }
-        ],
-        "Denise Rogers\noperator1": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 8
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 11
-            }
-        ],
+        "Jane\njane": {
+            "total": 13,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 7
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 6
+                }
+            ]
+        },
+        "Denise Rogers\noperator1": {
+            "total": 19,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 8
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 11
+                }
+            ]
+        },
         ...
     }
 }
 ```  
 </details>
 
-**getDeclinedProactiveChatsCount(level, callback, \[timePeriod\])** - overview of declined proactive chats statistics
+**getDeclinedProactiveChatsCount({ level, callback, \[timePeriod\] })** - overview of declined proactive chats statistics
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "account": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 17
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 19
-        }
-        ...
-    ]
+    "account": {
+        "total": 36,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 17
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 19
+            },
+            ...
+        ]
+    }
 }
 ```
 ```
 {
     "departments": {
-        "Sales": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 5
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 8
-            }
-        ],
-        "Technical Support": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 2
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
-            }
-        ],
-       ...
+        "Sales": {
+            "total": 13,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 5
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 8
+                }
+            ]
+        },
+        "Technical Support": {
+            "total": 6,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 2
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
+                }
+            ]
+        },
+        ...
     }
 }
 ```
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 4
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
-            }
-        ],
-        "Denise Rogers\noperator1": [
-            {
-                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 6
-            },
-            {
-                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
-            }
-        ],
+        "Jane\njane": {
+            "total": 8,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 4
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
+                }
+            ]
+        },
+        "Denise Rogers\noperator1": {
+            "total": 10,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 6
+                },
+                {
+                    "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 4
+                }
+            ]
+        },
         ...
     }
 }
 ```  
 </details>
 
-**getVisitsByURL(callback, \[timePeriod\])**  
+**getVisitsByURL({ callback, \[timePeriod\], \[limitedOpts\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "https://www.mywebsite.com/": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 491
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 471
-        }
-    ],
-    "https://www.mywebsite.com/prices": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 77
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 93
-        }
-    ],
-    "https://www.mywebsite.com/signup": [
-        {
-            "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 96
-        },
-        {
-            "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 91
-        }
-    ],
-	...
-}
-
-```  
-</details>
-
-**getVisitsByReferrer(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-{
-    "https://www.google.com/": [
-        {
-            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 56
-        },
-        {
-            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 49
-        }
-    ],
-    "https://googleads.g.doubleclick.net/": [
-        {
-            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 15
-        },
-        {
-            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 16
-        }
-    ],
-    "https://www.bing.com/": [
-        {
-            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 88
-        },
-        {
-            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 42
-        }
-    ],
-	...
-}
-```  
-</details>
-
-**getTotalHits(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-            "average": 4.8074045,
-            "total": 11557
-        }
+    "https://www.mywebsite.com/": {
+        "total": 962,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 491
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 471
+            }
+        ]
     },
-    {
-        "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-            "average": 5.087971,
-            "total": 11336
-        }
+    "https://www.mywebsite.com/prices": {
+        "total": 170,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 77
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 93
+            }
+        ]
+    },
+    "https://www.mywebsite.com/signup": {
+        "total": 187,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 01-Oct-2022 04:00:00": 96
+            },
+            {
+                "01-Oct-2022 04:00:00 - 01-Nov-2022 04:00:00": 91
+            }
+        ]
     },
     ...
-]
+}
+
 ```  
 </details>
 
-**getMissedChatsCount(level, callback, \[timePeriod\])**  
+**getVisitsByReferrer({ callback, \[timePeriod\], \[limitedOpts\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "account": [
+    "https://www.google.com/": {
+        "total": 105,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 56
+            },
+            {
+                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 49
+            }
+        ]
+    },
+    "https://googleads.g.doubleclick.net/": {
+        "total": 31,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 15
+            },
+            {
+                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 16
+            }
+        ]
+    },
+    "https://www.bing.com/": {
+        "total": 130,
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 88
+            },
+            {
+                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 42
+            }
+        ]
+    },
+    ...
+}
+```  
+</details>
+
+**getTotalHits({ callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
+```
+{
+    "total": {
+        "average": 4.95,
+        "total": 22893
+    },
+    "timeline": [
         {
-            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 7
+            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                "average": 4.8074045,
+                "total": 11557
+            }
         },
         {
-            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 9
+            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                "average": 5.087971,
+                "total": 11336
+            }
         },
         ...
     ]
 }
 ```  
+</details>
+
+**getMissedChatsCount({ level, callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
 ```
 {
-    "departments": {
-        "~": [
+    "account": {
+        "total": 16,
+        "timeline": [
             {
                 "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 7
             },
             {
                 "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 9
-            }
-        ],
-        "Technical Support": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 4
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 3
-            }
-        ],
+            ...
+        ]
+    }
+}
+```  
+```
+{
+    "departments": {
+        "~": {
+            "total": 16,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 7
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 9
+                }
+            ]
+        },
+        "Technical Support": {
+            "total": 7,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 4
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 3
+                }
+            ]
+        },
         ...
     }
 }
@@ -2564,93 +2806,117 @@ the pre-chat survey or department wasn't selected.
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 2
-            },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 2
-            }
-        ],
-        "Denise Jonson\noperator1": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 3
-            },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 1
-            }
-        ],
-		...
+        "Jane\njane": {
+            "total": 4,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 2
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 2
+                }
+            ]
+        },
+        "Denise Jonson\noperator1": {
+            "total": 4,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 3
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 1
+                }
+            ]
+        },
+        ...
     }
 }
 ```
 
 </details>  
 
-**getVisitorMessagesCount(callback, \[timePeriod\])**  
-<details>
-  <summary>Example of callback response data:</summary>
-
-```
-[
-    {
-        "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-            "average": 7.3333335,
-            "total": 154
-        }
-    },
-    {
-        "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-            "average": 4.354839,
-            "total": 135
-        }
-    },
-    ...
-]
-```  
-
-</details>
-
-**getOperatorMessagesCount(level, callback, \[timePeriod\])**  
+**getVisitorMessagesCount({ callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "account": [
+    "total": {
+        "average": 5.84408625,
+        "total": 289
+    },
+    "timeline": [
         {
             "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                "average": 6.3333335,
-                "total": 133
+                "average": 7.3333335,
+                "total": 154
             }
         },
         {
             "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                "average": 3.548387,
-                "total": 110
+                "average": 4.354839,
+                "total": 135
             }
         },
         ...
     ]
 }
 ```  
+
+</details>
+
+**getOperatorMessagesCount({ level, callback, \[timePeriod\] })**  
+<details>
+  <summary>Example of callback response data:</summary>
+
 ```
 {
-    "departments": {
-        "~": [
+    "account": {
+        "total": {
+            "average": 4.94086025,
+            "total": 243
+        },
+        "timeline": [
             {
                 "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                    "average": 10.230769,
+                    "average": 6.3333335,
                     "total": 133
                 }
             },
             {
                 "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": 4.5833335,
+                    "average": 3.548387,
                     "total": 110
                 }
-            }
-        ],
+            },
+            ...
+        ]
+    }
+}
+```  
+```
+{
+    "departments": {
+        "~": {
+            "total": {
+                "average": 7.40705125,
+                "total": 243
+            },
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                        "average": 10.230769,
+                        "total": 133
+                    }
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": 4.5833335,
+                        "total": 110
+                    }
+                }
+            ]
+        },
         ...
     }
 }
@@ -2658,111 +2924,117 @@ the pre-chat survey or department wasn't selected.
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                    "average": 6,
-                    "total": 24
-                }
+        "Jane\njane": {
+            "total": {
+                "average": 4.28571425,
+                "total": 42
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": 2.5714285,
-                    "total": 18
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                        "average": 6,
+                        "total": 24
+                    }
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": 2.5714285,
+                        "total": 18
+                    }
                 }
-            }
-        ],
-        "Denise Jonson\noperator1": [
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": 3.3333333,
-                    "total": 10
-                }
-            }
-        ],
-        "David\ndavid": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                    "average": 9,
-                    "total": 27
-                }
+            ]
+        },
+        "Denise Jonson\noperator1": {
+            "total": {
+                "average": 3.3333333,
+                "total": 10
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": 7.428571,
-                    "total": 52
+            "timeline": [
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": 3.3333333,
+                        "total": 10
+                    }
                 }
-            }
-        ],
+            ]
+        },
+        "David\ndavid": {
+            "total": {
+                "average": 8.2142855,
+                "total": 79
+            },
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                        "average": 9,
+                        "total": 27
+                    }
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": 7.428571,
+                        "total": 52
+                    }
+                }
+            ]
+        },
         ...
     }
 }
 ```
 </details>
 
-**getChatAcceptDelay(level, callback, \[timePeriod\])**  
+**getChatAcceptDelay({ level, callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
   
 ```
 {
-    "account": [
-        {
-            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                "average": [
-                    19.963846,
-                    "19s"
-                ],
-                "total": [
-                    259.53,
-                    "4m 19s"
-                ]
-            }
+    "account": {
+        "total": {
+            "average": 19.540514,
+            "total": 680.108
         },
-        {
-            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                "average": [
-                    19.117182,
-                    "19s"
-                ],
-                "total": [
-                    420.578,
-                    "7m"
-                ]
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                    "average": [19.963846, "19s"],
+                    "total": [259.53, "4m 19s"]
+                }
+            },
+            {
+                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                    "average": [19.117182, "19s"],
+                    "total": [420.578, "7m"]
+                }
             }
-        }
-    ]
+        ]
+    }
 }
 ```
 ```
 {
     "departments": {
-        "~": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                    "average": [
-                        19.963846,
-                        "19s"
-                    ],
-                    "total": [
-                        259.53,
-                        "4m 19s"
-                    ]
-                }
+        "~": {
+            "total": {
+                "average": 19.540514,
+                "total": 680.108
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": [
-                        19.117182,
-                        "19s"
-                    ],
-                    "total": [
-                        420.578,
-                        "7m"
-                    ]
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                        "average": [19.963846, "19s"],
+                        "total": [259.53, "4m 19s"]
+                    }
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": [19.117182, "19s"],
+                        "total": [420.578, "7m"]
+                    }
                 }
-            }
-        ],
+            ]
+        },
         ...
     }
 }
@@ -2770,139 +3042,130 @@ the pre-chat survey or department wasn't selected.
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                    "average": [
-                        15.9765,
-                        "15s"
-                    ],
-                    "total": [
-                        63.906,
-                        "1m 3s"
-                    ]
-                }
+        "Jane\njane": {
+            "total": {
+                "average": 13.342893,
+                "total": 138.871
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": [
-                        10.709286,
-                        "10s"
-                    ],
-                    "total": [
-                        74.965,
-                        "1m 14s"
-                    ]
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                        "average": [15.9765, "15s"],
+                        "total": [63.906, "1m 3s"]
+                    }
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": [10.709286, "10s"],
+                        "total": [74.965, "1m 14s"]
+                    }
                 }
-            }
-        ],
-        "Denise Jonson\noperator1": [
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": [
-                        26.118334,
-                        "26s"
-                    ],
-                    "total": [
-                        78.355,
-                        "1m 18s"
-                    ]
+            ]
+        },
+        "Denise Jonson\noperator1": {
+            "total": {
+                "average": 26.118334,
+                "total": 78.355
+            },
+            "timeline": [
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": [26.118334, "26s"],
+                        "total": [78.355, "1m 18s"]
+                    }
                 }
-            }
-        ],
+            ]
+        },
         ...
     }
 }
 ```  
 </details>
 
-**getOperatorsAwayTime(callback, \[timePeriod\])**  
+**getOperatorsAwayTime({ callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
-[
-  {
-    "08-May-2020 04:00:00 - 09-May-2020 04:00:00": {
-      total: 2,
-      average: 2
-    }
-  },
-  {
-    "09-May-2020 04:00:00 - 10-May-2020 04:00:00": {
-      total: 2,
-      average: 2
-    }
-  },
-  ...
-]
+{
+    "Operator name\nlogin": {
+        "total": {
+            "average": 2,
+            "total": 4
+        },
+        "timeline": [
+            {
+                "08-May-2020 04:00:00 - 09-May-2020 04:00:00": {
+                    "average": 2,
+                    "total": 2
+                }
+            },
+            {
+                "09-May-2020 04:00:00 - 10-May-2020 04:00:00": {
+                    "average": 2,
+                    "total": 2
+                }
+            },
+            ...
+        ]
+    },
+    ...
+}
 ```  
 
 </details>
  
-**getOnlineTime(level, callback, \[timePeriod\])**  
+**getOnlineTime({ level, callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "account": [
-        {
-            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                "average": [
-                    299.7523,
-                    "4m 59s"
-                ],
-                "total": [
-                    86328.664,
-                    "23h 58m 48s"
-                ]
-            }
+    "account": {
+        "total": {
+            "average": 300.09325,
+            "total": 172553.284
         },
-        {
-            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                "average": [
-                    300.4342,
-                    "5m"
-                ],
-                "total": [
-                    86224.62,
-                    "23h 57m 4s"
-                ]
+        "timeline": [
+            {
+                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                    "average": [299.7523, "4m 59s"],
+                    "total": [86328.664, "23h 58m 48s"]
+                }
+            },
+            {
+                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                    "average": [300.4342, "5m"],
+                    "total": [86224.62, "23h 57m 4s"]
+                }
             }
-        }
-    ]
+        ]
+    }
 }
 ```  
 ```
 {
     "departments": {
-        "Customer Support": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                    "average": [
-                        299.7523,
-                        "4m 59s"
-                    ],
-                    "total": [
-                        86328.664,
-                        "23h 58m 48s"
-                    ]
-                }
+        "Customer Support": {
+            "total": {
+                "average": 300.09325,
+                "total": 172553.284
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": [
-                        300.4342,
-                        "5m"
-                    ],
-                    "total": [
-                        86224.62,
-                        "23h 57m 4s"
-                    ]
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                        "average": [299.7523, "4m 59s"],
+                        "total": [86328.664, "23h 58m 48s"]
+                    }
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": [300.4342, "5m"],
+                        "total": [86224.62, "23h 57m 4s"]
+                    }
                 }
-            }
-        ],
+            ]
+        },
         ...
     }
 }
@@ -2910,32 +3173,26 @@ the pre-chat survey or department wasn't selected.
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
-                    "average": [
-                        298.35004,
-                        "4m 58s"
-                    ],
-                    "total": [
-                        21779.553,
-                        "6h 2m 59s"
-                    ]
-                }
+        "Jane\njane": {
+            "total": {
+                "average": 299.01836,
+                "total": 50549.475
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
-                    "average": [
-                        299.68668,
-                        "4m 59s"
-                    ],
-                    "total": [
-                        28769.922,
-                        "7h 59m 29s"
-                    ]
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": {
+                        "average": [298.35004, "4m 58s"],
+                        "total": [21779.553, "6h 2m 59s"]
+                    }
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": {
+                        "average": [299.68668, "4m 59s"],
+                        "total": [28769.922, "7h 59m 29s"]
+                    }
                 }
-            }
-        ],
+            ]
+        },
         ...
     }
 }
@@ -2943,7 +3200,7 @@ the pre-chat survey or department wasn't selected.
 
 </details>
 
-**getOfflineTime(level, callback, \[timePeriod\])**  
+**getOfflineTime({ level, callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
@@ -3045,67 +3302,82 @@ the pre-chat survey or department wasn't selected.
 ```
 </details> 
 
-**getSentProactiveChatsCount(level, callback, \[timePeriod\])**  
+**getSentProactiveChatsCount({ level, callback, \[timePeriod\] })**  
 <details>
   <summary>Example of callback response data:</summary>
 
 ```
 {
-    "account": [
-        {
-            "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 4
-        },
-        {
-            "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 9
-        },
-        ...
-    ]
-}
-```
-```
-{
-    "departments": {
-        "Customer Service": [
+    "account": {
+        "total": 13,
+        "timeline": [
             {
                 "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 4
             },
             {
                 "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 9
-            }
-        ],
-        "Billing": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 1
             },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 1
-            }
-        ],
-		...
-	}
+            ...
+        ]
+    }
+}
+```
+```
+{
+    "departments": {
+        "Customer Service": {
+            "total": 13,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 4
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 9
+                }
+            ]
+        },
+        "Billing": {
+            "total": 2,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 1
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 1
+                }
+            ]
+        },
+        ...
+    }
 }
 ```
 ```
 {
     "operators": {
-        "Jane\njane": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 1
-            },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 4
-            }
-        ],
-        "Denise\noperator1": [
-            {
-                "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 2
-            },
-            {
-                "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 5
-            }
-        ],
-		...
-	}
+        "Jane\njane": {
+            "total": 5,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 1
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 4
+                }
+            ]
+        },
+        "Denise\noperator1": {
+            "total": 7,
+            "timeline": [
+                {
+                    "01-Sep-2022 04:00:00 - 02-Sep-2022 04:00:00": 2
+                },
+                {
+                    "02-Sep-2022 04:00:00 - 03-Sep-2022 04:00:00": 5
+                }
+            ]
+        },
+        ...
+    }
 }
 ```  
 </details> 
@@ -3229,8 +3501,6 @@ Returns parser (function)
 
     opts.customParserName {string} - parser name
 
-    opts.isShouldAddTotals {boolean} - add the "total" parameter to the response
-
     callback {function}
 </details> 
 
@@ -3274,7 +3544,6 @@ getCustomMetrics({
                       type: 'OP_NAME',
                     },
                 ],
-                isShouldAddTotals: true,
             },
         },
         {
