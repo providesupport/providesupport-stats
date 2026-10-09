@@ -71,55 +71,62 @@ const statsLibInstance = new PSstatsAPI(accountName, statisticsPassword, timePer
     It can be:  
     * __string__ ( ```'operators'``` or ```'departments'``` or ```'account'``` ) to get data by operators, by departments or by account;
     * __object with 1 or 2 keys__ ( ```operators```, ```departments``` ) and array values ( ```['operator_or_department_name_1', 'operator_or_department_name_2', ...]``` )
+	
+	__level__ parameter example:
+	
+	```
+	{
+	    operators: ['JuliaForever', 'DirtyHarry', ...],
+	    departments: ['customer support', 'geeks', ...]
+	}
+	// request will return data for specified operators/departments only 
+	```
 
-__level__ parameter example:
-
-```
-{
-    operators: ['JuliaForever', 'DirtyHarry', ...],
-    departments: ['customer support', 'geeks', ...]
-}
-// request will return data for specified operators/departments only 
-```
 * **timePeriod** (optional) defines the time period for which statistics data is requested. 
-If not specified, the default period from the moment when statistics saving for the account was enabled till current time will be used. 
-Must be an object with 3 properties: 
-    * __startDate__ - any type as long as it's a valid Date object (```'Wed Mar 10 2021 17:53:31'```, ```'10 Mar 2021'```, or even ```1615391611580```) 
-    * __endDate__ - any type as long as it's a valid Date object (```'Wed Mar 10 2021 17:53:31'```, ```'10 Mar 2021'```, or even ```1615391611580```)
-    * __duration__ - one of the values: ```'hour'```, ```'day'```, ```'week'```, ```'month'```, ```'year'``` - this propertie is only used in get...Timeline methods
-    where the data breakdown by the specified time frames (__duration__) is requested. 
+
+	If omitted, the default period from the moment when statistics saving for the account was enabled till current time will be used. 
+
+	**timePeriod** is an object with three properties: 
+	* __startDate__ - any type as long as it's a valid Date object (```'Wed Mar 10 2021 17:53:31'```, ```'10 Mar 2021'```, or even ```1615391611580```) 
+	* __endDate__ - any type as long as it's a valid Date object (```'Wed Mar 10 2021 17:53:31'```, ```'10 Mar 2021'```, or even ```1615391611580```)
+	* __duration__ - one of the values: ```'hour'```, ```'day'```, ```'week'```, ```'month'```, ```'year'``` - this propertie is only used in `get...Timeline` methods where the data breakdown by the specified time frames (__duration__) is requested. 
     
-For example, if you need statistics for each day from September 1 till September 20, 2022, you specify timePeriod as 
-```
-{
-    startDate: "01 Sep 2022",
-    endDate: "20 Sep 2022",
-    duration: 'day'
-}
-```
+	**Example**: If you need statistics for each day from September 1 till September 20, 2022, you specify timePeriod as 
+	```
+	{
+	    startDate: "01 Sep 2022",
+	    endDate: "20 Sep 2022",
+	    duration: 'day'
+	}
+	```
 
-* **limitedOpts** (optional) pages the URL list returned by counter metrics.
-Other metrics are returned in full. If it is not passed, the full URL list is also returned in full.
-It is an object with 3 properties:
-    * __takeCount__ - how many URLs to return. Must be a positive integer. If not specified, ```10``` is used.
-    * __skipCount__ - how many URLs to skip before this page. Must be an integer of ```0``` or more. If not specified, ```0``` is used.
-    * __sortDirection__ - one of the values: ```'asc'``` or ```'desc'```. If not specified, ```'desc'``` is used.
+* **limitedOpts** (optional) controls pagination and sorting for URL-based statistics.
 
-If ```{}``` is being passed as limitedOpts, default values will be used.
-
-Example to get 10 first referrer URLs:
-
-```
-getPreChatSurveyReferrers({
-    callback: function(data) {},
-    limitedOpts: {
-        takeCount: 10,
-        skipCount: 0,
-        sortDirection: 'desc'
-    }
-})
-```
-In a response, only the URL fields are paged: referrers, visitsByURL and visitsByReferrer. Other statistics in that pool are returned in full.
+	If omitted, all URL entries for the selected period are returned.
+	
+	**Note:** For accounts or websites with a large volume of traffic, retrieving URL-based statistics without pagination may fail due to the excessive amount of data.
+	
+	**limitedOpts** is an object with three properties:
+	* **takeCount** - maximum number of URL entries to return. Must be a positive integer. Defaults to `10`.
+	* **skipCount** - number of URL entries to skip before returning results. Must be a non-negative integer. Defaults to `0`.
+	* **sortDirection** - sort order by count: `asc` (ascending) or `desc` (descending). Defaults to `desc`.
+	
+	Passing an empty object (`{}`) applies the default values.
+	
+	Pagination applies only to the `referrers`, `visitsByURL`, and `visitsByReferrer` fields. If a method returns mixed data (both URL-based and non-URL-based statistics), all other data is returned in full.
+	
+	**Example**: Retrieve the 10 referrer URLs with the highest counts:
+	
+	```
+	getPreChatSurveyReferrers({
+	    callback: function(data) {},
+	    limitedOpts: {
+	        takeCount: 10,
+	        skipCount: 0,
+	        sortDirection: 'desc'
+	    }
+	})
+	```
 
 ## Methods:  
 
