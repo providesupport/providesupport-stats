@@ -38,3 +38,5 @@ export const MULTIPLE = 'm'
 
 export const TOTAL = 'total'
 export const COUNTERS = 'counters'
+
+export const TOTAL_METRICS_COUNT = 'tmc'

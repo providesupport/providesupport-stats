@@ -39,6 +39,7 @@ import {
   STATS_PERIOD_ID,
   VALUES,
   VALUES_SUM,
+  TOTAL_METRICS_COUNT,
 } from '../constants/answerKeys'
 import calculateCustomMetrics from './calculateCustomMetrics'
 
@@ -118,6 +119,7 @@ export function parseMultipleCountersMetric(metric, statsPeriods) {
     parsedMetric[metricItemName] = parseCounterMetric(metricItem, statsPeriods)
     // parsedMetric['~total'] = (parsedMetric['~total'] || 0) + parsedMetric[metricItemName].total
   })
+  parsedMetric[TOTAL_METRICS_COUNT] = metric[TOTAL_METRICS_COUNT];
   return parsedMetric;
 }
 
@@ -256,6 +258,9 @@ function _parseSummaryData(metricsData) {
           }
       }
     })
+    if (metric[TAG_TITLE] === 'Page URL' && metric[TOTAL_METRICS_COUNT] != null) {
+      parsedData[metricNameInResponse][TOTAL_METRICS_COUNT] = metric[TOTAL_METRICS_COUNT];
+    }
   }
   return parsedData
 }
@@ -275,6 +280,9 @@ export function parseWebsiteSummaryData({ metrics, statsPeriods, opts }) {
     for (let metricItemInd = 0; metricItemInd < metricItems.length; metricItemInd++) {
       let metricItemName = metricItems[metricItemInd][METRIC_TAG];
       parsedData['visitsByReferrer'][metricItemName] = metricItems[metricItemInd][TOTAL];
+    }
+    if (visitsByReferrerMetric[TOTAL_METRICS_COUNT] != null) {
+      parsedData.visitsByReferrer[TOTAL_METRICS_COUNT] = visitsByReferrerMetric[TOTAL_METRICS_COUNT];
     }
   }
   return parsedData;
