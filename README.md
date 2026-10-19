@@ -113,7 +113,9 @@ const statsLibInstance = new PSstatsAPI(accountName, statisticsPassword, timePer
 	
 	Passing an empty object (`{}`) applies the default values.
 	
-	Pagination applies only to the `referrers`, `visitsByURL`, and `visitsByReferrer` fields. If a method returns mixed data (both URL-based and non-URL-based statistics), all other data is returned in full.
+	Pagination applies only to the `referrers`, `visitsByURL`, `visitsByReferrer`, `preChatSurveyReferrers` and `offlineFormReferrers` fields. If a method returns mixed data (both URL-based and non-URL-based statistics), all other data is returned in full.
+
+    Each URL list includes a `totalCount` field that represents the total number of URLs for the selected period. Due to pagination, the response may contain fewer URLs than the value specified in `totalCount`.
 	
 	**Example**: Retrieve the 10 referrer URLs with the highest counts:
 	
@@ -143,6 +145,7 @@ const statsLibInstance = new PSstatsAPI(accountName, statisticsPassword, timePer
       "https://domain.com/view/index.html": 2,
       "https://domain.com/signup/index.html": 1,
       ...
+      "totalCount": 3
     },
     "clickThroughRate": "6%"
   },
@@ -177,6 +180,7 @@ const statsLibInstance = new PSstatsAPI(accountName, statisticsPassword, timePer
       "https://domain.com/view/index.html": 8,
       "https://domain.com/signup/index.html": 7,
       ...
+      "totalCount": 15
     },
     "clickThroughRate": "13%"
   },
@@ -532,7 +536,8 @@ the pre-chat survey or department wasn't selected.
     "submits": 15,
     "referrers": {
         "https://www.mywebsite.com/": 20,
-        "https://mywebsiste.com/": 5
+        "https://mywebsiste.com/": 5,
+        "totalCount": 25
     },
     "clickThroughRate": "60%"
 }		
@@ -566,11 +571,13 @@ the pre-chat survey or department wasn't selected.
       "url_1": 457,
       "url_2": 436,
       ...
+      "totalCount": 893
     },
     "visitsByURL": {
       "url_3": 394,
       "url_4": 375,
       ...
+      "totalCount": 769
     }  
   }
   ```
@@ -586,11 +593,13 @@ the pre-chat survey or department wasn't selected.
       "url_1": 8,
       "url_2": 4,
       ...
+      "totalCount": 12
     },
     "offlineFormReferrers": {
       "url_3": 7,
       "url_2": 5,
       ...
+      "totalCount": 12
     }
 }
  
@@ -607,7 +616,8 @@ the pre-chat survey or department wasn't selected.
     "submits": 2,
     "referrers": {
         "https://www.mywebsite.com/": 15,
-        "https://www.mywebsite.com/prices": 3
+        "https://www.mywebsite.com/prices": 3,
+        "totalCount": 18
      },
     "clickThroughRate": "11%"
 }
@@ -973,6 +983,7 @@ the pre-chat survey or department wasn't selected.
                     ]
                },
 			   ...
+               "totalCount": 37
           }
      },
      "chats": {
@@ -1106,7 +1117,8 @@ the pre-chat survey or department wasn't selected.
                             "02-Aug-2022 04:00:00 - 03-Aug-2022 04:00:00": 2
                         }
                     ]
-               }
+               },
+               "totalCount": 3
           }
      },
      "proactiveChats": {
@@ -1910,6 +1922,7 @@ the pre-chat survey or department wasn't selected.
             ]
         },
 		...
+        "totalCount": 45
     },
     "offlineFormReferrers": {
         "https://www.mywebsite.com/": {
@@ -1940,6 +1953,7 @@ the pre-chat survey or department wasn't selected.
             ]
         },
 		...
+        "totalCount": 12
 	}
 }
 ```
@@ -1980,11 +1994,13 @@ the pre-chat survey or department wasn't selected.
                 {
                     "31-May-2022 21:00:00 - 30-Jun-2022 21:00:00": 28
                 },
+                {
                     "30-Jun-2022 21:00:00 - 31-Jul-2022 21:00:00": 18
                 }
             ]
         },
 		...
+        "totalCount": 141
     },
     "totalHits": {
         "total": {
@@ -2041,6 +2057,7 @@ the pre-chat survey or department wasn't selected.
             ]
         },
 		...
+        "totalCount": 80
     }
 }
 ```
@@ -2178,6 +2195,7 @@ the pre-chat survey or department wasn't selected.
         ]
     },
     ...
+    "totalCount": 1319
 }
 ```  
 
@@ -2223,6 +2241,7 @@ the pre-chat survey or department wasn't selected.
         ]
     },
     ...
+    "totalCount": 18
 }
 ```  
 
@@ -2683,6 +2702,7 @@ the pre-chat survey or department wasn't selected.
         ]
     },
     ...
+    "totalCount": 1319
 }
 
 ```  
@@ -2728,6 +2748,7 @@ the pre-chat survey or department wasn't selected.
         ]
     },
     ...
+    "totalCount": 266
 }
 ```  
 </details>

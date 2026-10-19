@@ -119,7 +119,9 @@ export function parseMultipleCountersMetric(metric, statsPeriods) {
     parsedMetric[metricItemName] = parseCounterMetric(metricItem, statsPeriods)
     // parsedMetric['~total'] = (parsedMetric['~total'] || 0) + parsedMetric[metricItemName].total
   })
-  parsedMetric.totalCount = metric[TOTAL_METRICS_COUNT];
+  if (metric[TOTAL_METRICS_COUNT] != null) {
+    parsedMetric.totalCount = metric[TOTAL_METRICS_COUNT];
+  }
   return parsedMetric;
 }
 
