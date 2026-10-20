@@ -170,8 +170,10 @@ const statsLibInstance = new PSstatsAPI(accountName, statisticsPassword, timePer
       "43s"
     ],
     "visitorMessagesPerChat": 4.9,
-    "chatsPerDay": 52.6,
-    "chatsPerHour": 2.2
+    "incomingChatsPerDay": 52.6,
+    "incomingChatsPerHour": 2.2,
+    "acceptedChatsPerDay": 32.3,
+    "acceptedChatsPerHour": 1.3
   },
   "preChatSurvey": {
     "loads": 184808,
@@ -250,8 +252,10 @@ const statsLibInstance = new PSstatsAPI(accountName, statisticsPassword, timePer
       "43s"
     ],
     "visitorMessagesPerChat": 4.9,
-    "chatsPerDay": 52.6,
-    "chatsPerHour": 2.2
+    "incomingChatsPerDay": 52.6,
+    "incomingChatsPerHour": 2.2,
+    "acceptedChatsPerDay": 32.3,
+    "acceptedChatsPerHour": 1.3
   },
   "preChatSurvey": {
     "loads": 184808,
