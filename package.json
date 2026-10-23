@@ -1,6 +1,6 @@
 {
   "name": "@providesupport/stats",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Library to get providesupport statistics",
   "main": "./dist/PSstatsAPI.js",
   "scripts": {

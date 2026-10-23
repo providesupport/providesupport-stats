@@ -11,9 +11,13 @@ E.g. you may want to create your own chat statistics dashboard for your team or 
 
 # Demo
 
-[Minimal demo](https://codepen.io/providesupport/pen/MWRPwYJ)
+# Demo
 
-In the demo, you'll learn how to import and initialize the statistics library, get some statistics data and visualise it. 
+[Non-limited demo](https://codepen.io/providesupport/pen/LEWBRwy) uses `getOperatorsSummary()` and returns the full operator summary for the selected dates.
+
+[Limited demo](https://codepen.io/providesupport/pen/MWRPwYJ) uses `getPreChatSurveyReferrers()` with `limitedOpts` and returns one page of referrer URLs.
+
+In both demos, you'll learn how to import and initialize the statistics library, get some statistics data and visualise it.
 
 [Provide Support Live Chat statistics application](https://stats.providesupport.com/) based on this library
 
